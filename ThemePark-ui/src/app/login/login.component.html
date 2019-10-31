@@ -1,0 +1,9 @@
+<h1>
+  Sign in
+</h1>
+
+
+<button *ngIf="!loggedIn" (click)="signInWithGoogle()">Sign in with Google</button>
+<button *ngIf="!loggedIn" (click)="signInWithFB()">Sign in with FaceBook</button>
+<button *ngIf="loggedIn" (click)="signOut()">Logout</button>
+<img *ngIf="loggedIn" [src]="user.photoUrl" alt="">
