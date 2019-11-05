@@ -11,30 +11,35 @@ export class LoginComponent implements OnInit {
 
   public user: SocialUser;
   public loggedIn: boolean;
-
-
+  
   constructor(private authService: AuthService) {
   }
 
-  ngOnInit() {
-    this.authService.authState.subscribe((user) => {
-      this.user = user;
-      console.log(user);
-      this.loggedIn = (user != null);
+  ngOnInit() {}
+
+  // https://console.developers.google.com/apis/credentials?project=theme-park-proje-1571093787803
+  signInWithGoogle(): void {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(value => {
+      this.user = value;
+      this.loggedIn = (value != null);
+      console.log(value);
     });
   }
 
-  signInWithGoogle(): void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
-  }
-
+  // https://developers.facebook.com/apps/
   signInWithFB(): void {
-    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(value => {
+      this.user = value;
+      this.loggedIn = (value != null);
+      console.log(value);
+    });
   }
 
   signOut(): void {
-    this.authService.signOut();
+    this.authService.signOut().then(value => {
+      this.user = null;
+      this.loggedIn = false;
+    });
   }
-
 
 }
