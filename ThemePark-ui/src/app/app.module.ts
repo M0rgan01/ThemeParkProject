@@ -1,12 +1,11 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
 import {AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
-import { LoginComponent } from './login/login.component';
-import {ConfigService} from '../service/config.service';
+import {LoginComponent} from './login/login.component';
 import {HttpClientModule} from '@angular/common/http';
-import { environment } from '../environments/environment';
+import {environment} from '../environments/environment';
 
 const config = new AuthServiceConfig([
   {
@@ -31,7 +30,7 @@ export function provideConfig() {
   imports: [
     BrowserModule, SocialLoginModule, HttpClientModule
   ],
-  providers: [ConfigService, {
+  providers: [ {
     provide: AuthServiceConfig,
     useFactory: provideConfig
   }],
