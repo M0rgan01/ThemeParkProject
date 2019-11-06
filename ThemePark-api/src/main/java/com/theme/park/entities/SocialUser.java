@@ -3,11 +3,9 @@ package com.theme.park.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,8 +27,11 @@ public class SocialUser {
     private String authToken;
     private String idToken;
     private String authorizationCode;
+    private boolean active;
     @OneToMany(mappedBy = "socialUser")
     private List<Comment> comments;
     @ManyToMany
     private Collection<Role> roles = new HashSet<>();
+    @Transient
+    private List<GrantedAuthority> authorities;
 }
