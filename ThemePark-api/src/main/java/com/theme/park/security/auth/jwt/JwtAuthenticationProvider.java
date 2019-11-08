@@ -33,6 +33,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private String authoritiesPrefix;
     @Value("${jwt.secret}")
     private String secret;
+    @Value("${jwt.prefix.provider}")
+    private String providerPrefix;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -52,7 +54,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         SocialUser context = new SocialUser();
         context.setName(subject);
         context.setAuthorities(Role.getListAuthorities(listRoles));
-        logger.debug("Success authentication for userName " + subject);
+        logger.debug("Success authentication for user " + subject + " and provider : " + jwsClaims.getBody().get(providerPrefix, String.class));
         return new JwtAuthenticationToken(context, context.getAuthorities());
     }
 

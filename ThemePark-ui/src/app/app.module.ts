@@ -6,6 +6,8 @@ import {AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialLog
 import {LoginComponent} from './login/login.component';
 import {HttpClientModule} from '@angular/common/http';
 import {environment} from '../environments/environment';
+import {APIService} from '../service/api.service';
+import {AppRoutingModule} from './app-routing.module';
 
 const config = new AuthServiceConfig([
   {
@@ -28,9 +30,9 @@ export function provideConfig() {
     LoginComponent
   ],
   imports: [
-    BrowserModule, SocialLoginModule, HttpClientModule
+    BrowserModule, SocialLoginModule, HttpClientModule, AppRoutingModule
   ],
-  providers: [ {
+  providers: [ APIService, {
     provide: AuthServiceConfig,
     useFactory: provideConfig
   }],

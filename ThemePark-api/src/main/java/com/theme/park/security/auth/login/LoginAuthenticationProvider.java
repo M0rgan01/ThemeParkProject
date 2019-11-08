@@ -1,13 +1,10 @@
 package com.theme.park.security.auth.login;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
-import feign.RetryableException;
-import org.paniergarni.apigateway.object.Role;
-import org.paniergarni.apigateway.object.User;
-import org.paniergarni.apigateway.proxy.UserProxy;
-import org.paniergarni.apigateway.security.exception.ProxyException;
-import org.paniergarni.apigateway.security.response.ErrorResponse;
+import com.theme.park.business.SocialUserBusiness;
+import com.theme.park.entities.Role;
+import com.theme.park.entities.SocialUser;
+import com.theme.park.exception.NotFoundException;
+import com.theme.park.object.SocialUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,60 +27,42 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginAuthenticationProvider implements AuthenticationProvider {
 
-    private UserProxy userProxy;
-    private ObjectMapper objectMapper;
+    private SocialUserBusiness socialUserBusiness;
     private static final Logger logger = LoggerFactory.getLogger(LoginAuthenticationProvider.class);
 
     @Autowired
-    public LoginAuthenticationProvider(UserProxy userProxy, ObjectMapper objectMapper) {
-        this.userProxy = userProxy;
-        this.objectMapper = objectMapper;
+    public LoginAuthenticationProvider(SocialUserBusiness socialUserBusiness) {
+        this.socialUserBusiness = socialUserBusiness;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         // récupération des information de connection
-        String username = (String) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
+        SocialUserDTO socialUserDTO = (SocialUserDTO) authentication.getPrincipal();
+        SocialUser socialUser;
 
-        // récupération du contact pour la comparaison
-        User contact;
-
-        try {
-            contact = userProxy.userConnection(username, password);
-        } catch (FeignException e) {
-            // si l'instance est encore dans le register mais down
-            if (e instanceof RetryableException) {
-                logger.error("User Proxy instance error : " + e.contentUTF8());
-                throw new AuthenticationServiceException("internal.error");
-            }
-            //on récupère le message d'erreur d'origine
-            ErrorResponse errorResponse;
-
-            try {
-                errorResponse = objectMapper.readValue(e.content(), ErrorResponse.class);
-            } catch (Exception e1) {
-                logger.error("User Proxy instance error : " + e.contentUTF8());
-                throw new AuthenticationServiceException("internal.error");
-            }
-
-            throw new ProxyException(errorResponse.getError());
-
-            // si l'instance n'est plus dans le register
-        } catch (Exception e) {
-            logger.error("User Proxy instance error : " + e.getMessage());
-            throw new AuthenticationServiceException("internal.error");
-        }
+        // on vérifie la présence d'un utilisateur semblable en DB, sinon on l'inscrit
+       try {
+         socialUser = socialUserBusiness.getSocialUserByEmail(socialUserDTO.getEmail(), socialUserDTO.getProvider());
+       } catch (NotFoundException e) {
+           try {
+               socialUser = socialUserBusiness.createSocialUser(socialUserDTO);
+           } catch (NotFoundException e1) {
+               logger.error("role.not.found");
+               throw new AuthenticationServiceException("internal.error");
+           }
+       }
 
         // vérification des roles
-        if (contact.getRoles() == null){
-            logger.warn("User role null for userName : " + contact.getUserName());
+        if (socialUser.getRoles() == null){
+            logger.warn("User role null for userName : " + socialUser.getName());
             throw new InsufficientAuthenticationException("user.roles.null");
         }
-        contact.setAuthorities(Role.getListAuthorities(contact.getRoles()));
-        logger.debug("Success authentication for userName : " + contact.getUserName());
-        return new UsernamePasswordAuthenticationToken(contact, null, contact.getAuthorities());
+        socialUser.setAuthorities(Role.getListAuthorities(socialUser.getRoles()));
+        logger.debug("Success authentication for userName : " + socialUser.getName());
+
+        return new UsernamePasswordAuthenticationToken(socialUser, null, socialUser.getAuthorities());
     }
 
     @Override

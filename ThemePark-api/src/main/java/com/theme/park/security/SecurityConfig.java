@@ -134,10 +134,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
 
         // requete nécésitant un Role particulier
-        http.authorizeRequests().antMatchers(adminRoleUrl.toArray(new String[adminRoleUrl.size()])).hasAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(adminRoleUrl.toArray(new String[adminRoleUrl.size()])).hasAuthority("ADMIN");
 
         // requete nécésitant une authentification
         http.authorizeRequests().anyRequest().authenticated();
+
+        // H2 console
+        http.headers().frameOptions().disable();
 
         // filtre pour le processus de login initial, s'effectue uniquement à l'adresse
         // indiqué en param 1
