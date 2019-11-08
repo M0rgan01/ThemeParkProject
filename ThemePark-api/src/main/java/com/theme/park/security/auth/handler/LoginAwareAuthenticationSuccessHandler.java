@@ -1,6 +1,5 @@
 package com.theme.park.security.auth.handler;
 
-
 import com.theme.park.security.token.JwtService;
 import com.theme.park.entities.SocialUser;
 import org.springframework.beans.factory.annotation.Autowired;

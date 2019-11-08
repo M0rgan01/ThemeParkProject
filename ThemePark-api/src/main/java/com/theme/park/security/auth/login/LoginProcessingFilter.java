@@ -1,9 +1,9 @@
 package com.theme.park.security.auth.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.paniergarni.apigateway.object.User;
-import org.paniergarni.apigateway.security.exception.AuthMethodNotSupportedException;
-import org.paniergarni.apigateway.security.exception.JsonException;
+import com.theme.park.exception.AuthMethodNotSupportedException;
+import com.theme.park.exception.JsonException;
+import com.theme.park.object.SocialUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -20,7 +20,12 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Filtre de mise en place d'authentification par Login
@@ -55,21 +60,26 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
         }
 
         //récupération du json contenu dans le corp de requete
-        User contact;
+        SocialUserDTO contact;
+
         try {
-            contact = objectMapper.readValue(request.getInputStream(), User.class);
+            contact = objectMapper.readValue(request.getInputStream(), SocialUserDTO.class);
         } catch (Exception e) {
-            logger.debug("Json error for get UserName and passWord");
+            e.printStackTrace();
+            logger.info("Json error for SocialUser object");
             throw new JsonException("json.error");
         }
-        // vérification de la validité de l'object
-        if (contact.getUserName() == null && contact.getUserName().isEmpty())
-            throw new InsufficientAuthenticationException("contact.empty.mail.or.username");
-        if (contact.getPassWord() == null || contact.getPassWord().isEmpty())
-            throw new InsufficientAuthenticationException("contact.empty.password");
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(contact.getUserName(), contact.getPassWord());
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
 
+        Set<ConstraintViolation<SocialUserDTO>> violations = validator.validate(contact);
+
+        for (ConstraintViolation<SocialUserDTO> violation : violations) {
+            throw new InsufficientAuthenticationException(violation.getMessage());
+        }
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(contact, null);
         //processus d'authentification
         return this.getAuthenticationManager().authenticate(token);
     }

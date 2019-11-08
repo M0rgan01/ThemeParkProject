@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,21 +17,20 @@ import java.util.List;
 @AllArgsConstructor
 public class SocialUser {
 
-    @Id
-    private Long id;
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long socialUserId;
+    private String id;
     private String provider;
     private String name;
     private String email;
     private String photoUrl;
     private String firstName;
     private String lastName;
-    private String authToken;
-    private String idToken;
-    private String authorizationCode;
+    private Date firstLoginDate;
     private boolean active;
     @OneToMany(mappedBy = "socialUser")
     private List<Comment> comments;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new HashSet<>();
     @Transient
     private List<GrantedAuthority> authorities;

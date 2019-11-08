@@ -55,7 +55,7 @@ public class Role {
         if (roles == null || roles.isEmpty())
             throw new IllegalArgumentException("list.roles.empty");
 
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
 
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
