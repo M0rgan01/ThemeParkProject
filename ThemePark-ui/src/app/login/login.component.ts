@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
+import {APIService} from '../../service/api.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,27 +13,35 @@ export class LoginComponent implements OnInit {
 
   public user: SocialUser;
   public loggedIn: boolean;
-  
-  constructor(private authService: AuthService) {
+
+  constructor(private authService: AuthService, private api: APIService, private router: Router) {
   }
 
   ngOnInit() {}
 
-  // https://console.developers.google.com/apis/credentials?project=theme-park-proje-1571093787803
-  signInWithGoogle(): void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(value => {
-      this.user = value;
-      this.loggedIn = (value != null);
-      console.log(value);
-    });
+
+  signIn(provider: string) {
+    if (provider === 'google') {
+      this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(value => {
+        this.apiLogin(value);
+      });
+    } else if (provider === 'facebook') {
+      this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(value => {
+        this.apiLogin(value);
+      });
+    } else {
+      console.log('provider.error');
+    }
+
   }
 
-  // https://developers.facebook.com/apps/
-  signInWithFB(): void {
-    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(value => {
-      this.user = value;
-      this.loggedIn = (value != null);
-      console.log(value);
+  apiLogin(user: SocialUser) {
+    this.user = user;
+    this.loggedIn = (user != null);
+    this.api.login(user).subscribe(value => {
+      console.log('success');
+    }, error1 => {
+      console.log(error1);
     });
   }
 
@@ -42,4 +52,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // https://console.developers.google.com/apis/credentials?project=theme-park-proje-1571093787803
+  signInWithGoogle(): void { }
+
+  // https://developers.facebook.com/apps/
+  signInWithFB(): void { }
 }
