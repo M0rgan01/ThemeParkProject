@@ -2,6 +2,9 @@ package com.theme.park.security.token;
 
 
 import com.theme.park.entities.SocialUser;
+import com.theme.park.exception.JwtExpiredTokenException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 
@@ -47,4 +50,13 @@ public interface JwtService {
   * @return token (sans préfix)
   */
   String extract(String header) throws BadCredentialsException;
+
+ /**
+  * Parses and validates JWT Token signature.
+  *
+  * @throws BadCredentialsException
+  * @throws JwtExpiredTokenException
+  *
+  */
+  Jws<Claims> parseClaims(String token) throws AuthenticationException;
 }
