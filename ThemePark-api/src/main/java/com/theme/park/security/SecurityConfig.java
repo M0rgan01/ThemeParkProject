@@ -139,7 +139,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // requete nécésitant une authentification
         http.authorizeRequests().anyRequest().authenticated();
 
-        // H2 console
+        // H2 console permission
         http.headers().frameOptions().disable();
 
         // filtre pour le processus de login initial, s'effectue uniquement à l'adresse

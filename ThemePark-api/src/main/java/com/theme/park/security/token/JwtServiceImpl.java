@@ -1,14 +1,12 @@
 package com.theme.park.security.token;
 
 
+import com.theme.park.exception.JwtExpiredTokenException;
 import com.theme.park.security.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.theme.park.doa.SocialUserRepository;
 import com.theme.park.entities.Role;
 import com.theme.park.entities.SocialUser;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +87,7 @@ public class JwtServiceImpl implements JwtService {
     public SocialUser validateRefreshToken(JwtToken token) throws AuthenticationException {
 
         // vérification du token
-        Jws<Claims> claims = token.parseClaims(token.getToken(), secret);
+        Jws<Claims> claims = parseClaims(token.getToken());
 
         // on recupere le contact pour comparaison
         Optional<SocialUser> contact = socialUserRepository.findByNameAndProvider(claims.getBody().getSubject(), claims.getBody().get(providerPrefix, String.class));
@@ -97,7 +95,7 @@ public class JwtServiceImpl implements JwtService {
         if (!contact.isPresent())
             throw new BadCredentialsException("user.not.found");
         // si le contact est toujours bon, alors le token est toujours valide
-        else if (contact.get().isActive() != (boolean) claims.getBody().get(activePrefix))
+        else if (contact.get().isActive() != claims.getBody().get(activePrefix, Boolean.class))
             throw new DisabledException("user.not.active");
 
         contact.get().setAuthorities(Role.getListAuthorities(contact.get().getRoles()));
@@ -113,6 +111,17 @@ public class JwtServiceImpl implements JwtService {
         }
 
         return header.substring(tokenPrefix.length(), header.length());
+    }
+
+    @Override
+    public Jws<Claims> parseClaims(String token) throws AuthenticationException {
+        try {
+            return Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SignatureException ex) {
+            throw new BadCredentialsException("jwt.invalid");
+        } catch (ExpiredJwtException expiredEx) {
+            throw new JwtExpiredTokenException( "jwt.expired");
+        }
     }
 
 }

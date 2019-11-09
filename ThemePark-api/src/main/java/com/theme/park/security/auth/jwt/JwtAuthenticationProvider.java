@@ -2,6 +2,7 @@ package com.theme.park.security.auth.jwt;
 
 
 import com.theme.park.security.token.JwtAuthenticationToken;
+import com.theme.park.security.token.JwtService;
 import com.theme.park.security.token.JwtToken;
 import com.theme.park.entities.Role;
 import com.theme.park.entities.SocialUser;
@@ -31,10 +32,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenAuthenticationProcessingFilter.class);
     @Value("${jwt.prefix.authorities}")
     private String authoritiesPrefix;
-    @Value("${jwt.secret}")
-    private String secret;
     @Value("${jwt.prefix.provider}")
     private String providerPrefix;
+    private JwtService jwtService;
+
+    public JwtAuthenticationProvider(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -42,7 +46,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         JwtToken jwtToken = (JwtToken) authentication.getCredentials();
 
         //on récupère les claimes, tout en vérifiant le token
-        Jws<Claims> jwsClaims = jwtToken.parseClaims(jwtToken.getToken(), secret);
+        Jws<Claims> jwsClaims = jwtService.parseClaims(jwtToken.getToken());
         
         // récupère le sujet (username)
         String subject = jwsClaims.getBody().getSubject();
