@@ -5,7 +5,6 @@ import com.theme.park.exception.AlreadyExistException;
 import com.theme.park.exception.NotFoundException;
 
 import javax.security.auth.login.AccountException;
-import java.util.List;
 
 public interface RoleBusiness {
     /** Création d'un role
@@ -36,5 +35,5 @@ public interface RoleBusiness {
      * @return List Role
      * @throws AccountException
      */
-    List<Role> getAdminRole() throws NotFoundException;
+    Role getAdminRole() throws NotFoundException;
 }

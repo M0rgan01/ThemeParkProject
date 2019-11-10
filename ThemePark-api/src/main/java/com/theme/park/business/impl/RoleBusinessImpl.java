@@ -7,18 +7,17 @@ import com.theme.park.exception.AlreadyExistException;
 import com.theme.park.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class RoleBusinessImpl implements RoleBusiness {
 
     private static final Logger logger = LoggerFactory.getLogger(RoleBusinessImpl.class);
-    @Autowired
     private RoleRepository roleRepository;
+
+    public RoleBusinessImpl(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     public Role createRole(Role role) throws AlreadyExistException {
@@ -36,21 +35,13 @@ public class RoleBusinessImpl implements RoleBusiness {
 
     @Override
     public Role getUserRole() throws NotFoundException {
-        logger.debug("Get roles for user");
+        logger.debug("Get USER role");
         return roleRepository.findByName("USER").orElseThrow(() -> new NotFoundException("role.user.not.found"));
     }
 
     @Override
-    public List<Role> getAdminRole() throws NotFoundException {
-
-        Role user = roleRepository.findByName("USER").orElseThrow(() -> new NotFoundException("role.user.not.found"));
-        Role admin = roleRepository.findByName("ADMIN").orElseThrow(() -> new NotFoundException("role.admin.not.found"));
-
-        List<Role> roles = new ArrayList<>();
-
-        roles.add(user);
-        roles.add(admin);
-        logger.debug("Get roles for admin");
-        return roles;
+    public Role getAdminRole() throws NotFoundException {
+        logger.debug("Get ADMIN role");
+        return roleRepository.findByName("USER").orElseThrow(() -> new NotFoundException("role.user.not.found"));
     }
 }
