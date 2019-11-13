@@ -1,6 +1,7 @@
 package com.theme.park.controller.handler;
 
 import com.theme.park.exception.AlreadyExistException;
+import com.theme.park.exception.CriteriaException;
 import com.theme.park.exception.NotFoundException;
 import com.theme.park.security.response.ErrorResponse;
 import org.slf4j.Logger;
@@ -100,5 +101,12 @@ public class HandleException {
     @ResponseBody
     public ErrorResponse handleException(AlreadyExistException ex) {
         return ErrorResponse.of(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CriteriaException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseBody
+    public ErrorResponse handleException(CriteriaException ex) {
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 }

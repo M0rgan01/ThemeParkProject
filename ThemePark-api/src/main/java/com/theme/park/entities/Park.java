@@ -17,7 +17,7 @@ public class Park {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private double globalNotation;
+    private float globalNotation;
     private String country;
     private String location;
     private String GPS;
@@ -28,4 +28,5 @@ public class Park {
     private Date openingDate;
     @OneToMany(mappedBy = "park")
     private List<Comment> comments;
+    private List<String> photoList;
 }

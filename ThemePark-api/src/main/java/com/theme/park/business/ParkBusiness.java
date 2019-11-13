@@ -15,5 +15,6 @@ public interface ParkBusiness {
     Page<Park> searchParks(List<SearchCriteria> searchCriteria, int page, int size) throws CriteriaException;
     Park findById(Long id) throws NotFoundException;
     Park createPark(ParkDTO parkDTO) throws AlreadyExistException;
-    Park updatePark(ParkDTO parkDTO) throws AlreadyExistException, NotFoundException;
+    Park updatePark(Long id, ParkDTO parkDTO) throws AlreadyExistException, NotFoundException;
+    void updateNotation(Long id) throws NotFoundException;
 }

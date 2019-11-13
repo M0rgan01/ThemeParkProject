@@ -4,6 +4,7 @@ import com.theme.park.business.ParkBusiness;
 import com.theme.park.doa.ParkRepository;
 import com.theme.park.doa.specification.ParkSpecificationBuilder;
 import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.entities.Comment;
 import com.theme.park.entities.Park;
 import com.theme.park.exception.AlreadyExistException;
 import com.theme.park.exception.CriteriaException;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,9 +73,9 @@ public class ParkBusinessImpl implements ParkBusiness {
     }
 
     @Override
-    public Park updatePark(ParkDTO parkDTO) throws AlreadyExistException, NotFoundException {
+    public Park updatePark(Long id, ParkDTO parkDTO) throws AlreadyExistException, NotFoundException {
 
-        Park parkCompare = findById(parkDTO.getId());
+        Park parkCompare = findById(id);
 
         if (!parkCompare.getName().equals(parkDTO.getName()))
             if (parkRepository.findByName(parkDTO.getName()).isPresent())
@@ -83,6 +86,25 @@ public class ParkBusinessImpl implements ParkBusiness {
 
         logger.info("Update park with id " + parkDTO.getId());
         return parkRepository.save(park);
+    }
+
+    @Override
+    public void updateNotation(Long id) throws NotFoundException {
+        Park park = findById(id);
+
+        int total = 0;
+
+        for (Comment comment: park.getComments()) {
+            total += comment.getNotation();
+        }
+
+        float truncatedDouble = BigDecimal.valueOf((float) total / park.getComments().size())
+                .setScale(2, RoundingMode.HALF_UP)
+                .floatValue();
+
+        park.setGlobalNotation(truncatedDouble);
+        logger.info("Update notation for park with id " + id);
+        parkRepository.save(park);
     }
 
 
