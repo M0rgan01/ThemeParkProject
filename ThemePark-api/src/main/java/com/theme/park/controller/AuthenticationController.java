@@ -2,19 +2,16 @@ package com.theme.park.controller;
 
 import com.theme.park.security.token.JwtService;
 import com.theme.park.security.token.JwtToken;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Api( description="API d'inscription, de connection d'utilisateur et de rafraichissement du token")
 @RestController
 @RequestMapping("/themeParkAPI/auth")
 public class AuthenticationController {
@@ -50,5 +47,16 @@ public class AuthenticationController {
         responseHeaders.add(headerAuth, tokenPrefix + jwt);
         responseHeaders.add(headerRefresh, request.getHeader(headerRefresh));
         return ResponseEntity.ok().headers(responseHeaders).body(null);
+    }
+
+    @ApiOperation(value = "Connection d'un utilisateur")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Succès de la connction"),
+            @ApiResponse(code = 409, message = "UserName / Email / PassWord incorrect"),
+            @ApiResponse(code = 500, message = "Erreur interne"),
+    })
+    @PostMapping("/login")
+    public void fakeLogin(@ApiParam("User") @RequestParam String userName, @ApiParam("Password") @RequestParam String passWord) {
+        throw new IllegalStateException("This method shouldn't be called. It's implemented by Spring Security filters.");
     }
 }
