@@ -3,6 +3,7 @@ package com.theme.park.security.auth.login;
 import com.theme.park.business.SocialUserBusiness;
 import com.theme.park.entities.Role;
 import com.theme.park.entities.SocialUser;
+import com.theme.park.exception.AlreadyExistException;
 import com.theme.park.exception.NotFoundException;
 import com.theme.park.object.SocialUserDTO;
 import org.slf4j.Logger;
@@ -49,7 +50,10 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
            try {
                socialUser = socialUserBusiness.createSocialUser(socialUserDTO);
            } catch (NotFoundException e1) {
-               logger.error("role.not.found");
+               logger.error("Role not found");
+               throw new AuthenticationServiceException("internal.error");
+           } catch (AlreadyExistException e2) {
+               logger.error("User already exist with email " + socialUserDTO.getEmail() + " and provider " + socialUserDTO.getProvider());
                throw new AuthenticationServiceException("internal.error");
            }
        }

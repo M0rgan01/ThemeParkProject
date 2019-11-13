@@ -1,11 +1,10 @@
 package com.theme.park.security.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Personnalisation d'une réponse HTTP pour les erreur
@@ -16,25 +15,36 @@ import java.util.Date;
  *
  */
 @Data
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorResponse {
-    // HTTP Response Status Code
+
+    private List<ErrorDetails> errors;
+    private String error;
+    private Date timestamp;
     private HttpStatus status;
 
-    // General Error message
-    private String error;
-
-    private Date timestamp;
+    protected ErrorResponse(List<ErrorDetails> errors, HttpStatus status) {
+        this.errors = errors;
+        this.timestamp = new Date();
+        this.status = status;
+    }
 
     protected ErrorResponse(String error, HttpStatus status) {
         this.error = error;
-        this.status = status;
         this.timestamp = new Date();
+        this.status = status;
     }
 
-    public static ErrorResponse of(String error, HttpStatus status) {
+    public static ErrorResponse of( String error, HttpStatus status) {
         return new ErrorResponse(error, status);
     }
 
+    public static ErrorResponse of( List<ErrorDetails> errors, HttpStatus status) {
+        return new ErrorResponse(errors, status);
+    }
+
+    @Data
+    public static class ErrorDetails {
+        private String fieldName;
+        private String message;
+    }
 }
