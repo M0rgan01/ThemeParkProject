@@ -28,5 +28,6 @@ public class Park {
     private Date openingDate;
     @OneToMany(mappedBy = "park")
     private List<Comment> comments;
+    @ElementCollection(targetClass=String.class)
     private List<String> photoList;
 }

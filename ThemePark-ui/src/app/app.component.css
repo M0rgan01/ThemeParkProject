@@ -1,0 +1,38 @@
+.loginBackGround{
+  background: url("../assets/img/main.jpg") no-repeat;
+  background-size: cover;
+}
+
+.img-rounded{
+  border-radius: 50%;
+  height: 40px;
+}
+
+.logo{
+  height: 50px;
+}
+
+.nav-bg{
+  background: #393939;
+}
+
+.side-bar-bg{
+  background: #D5D4D2;
+  color: black;
+}
+
+/*lien sidebar*/
+.side-bar-bg ul :hover{
+  text-decoration: none;
+  background: #A3A3A3;
+}
+/*lien déroulant sidebar*/
+.side-bar-bg ul div :hover{
+  background: none;
+}
+
+.input-group-text {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  background: #75d7c7;
+}
