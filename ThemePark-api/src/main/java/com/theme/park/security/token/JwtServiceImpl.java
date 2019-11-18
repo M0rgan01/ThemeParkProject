@@ -44,6 +44,8 @@ public class JwtServiceImpl implements JwtService {
     private String authoritiesPrefix;
     @Value("${jwt.prefix.provider}")
     private String providerPrefix;
+    @Value("${jwt.prefix.photo}")
+    private String photoPrefix;
     @Value("${jwt.prefix.active.refresh}")
     private String activePrefix;
 
@@ -61,6 +63,7 @@ public class JwtServiceImpl implements JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + authTokenExpiration)) // ajout d'une date d'expiration
                 .signWith(SignatureAlgorithm.HS256, secret) // partie secrete servant de clé, avec un algorithme de type HS 256
                 .claim(providerPrefix, userContext.getProvider())
+                .claim(photoPrefix, userContext.getPhotoUrl())
                 .claim(authoritiesPrefix, userContext.getRoles().stream().map(s -> s.toString()).collect(Collectors.toList())) // ajout personnalisé --> on ajoute les roles
                 .compact(); // construction du token
     }

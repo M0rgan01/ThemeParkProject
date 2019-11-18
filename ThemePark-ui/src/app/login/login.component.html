@@ -1,9 +1,24 @@
-<h1>
-  Sign in
-</h1>
+<div class="d-flex align-items-center min-vh-100 row">
+  <div class="offset-3 col-6">
+    <div class="card transparent">
+      <div class="card-body">
 
+        <div class="text-center">
+          <a routerLink="/">
+            <img src="../../assets/img/logo.png" alt="Profile picture" class="logo img-fluid">
+          </a>
+        </div>
 
-<button *ngIf="!loggedIn" (click)="signIn('google')">Sign in with Google</button>
-<button *ngIf="!loggedIn" (click)="signIn('facebook')">Sign in with FaceBook</button>
-<button *ngIf="loggedIn" (click)="signOut()">Logout</button>
-<img *ngIf="loggedIn" [src]="user.photoUrl" alt="">
+        <h5 class="card-title">Authentification</h5>
+        <p class="card-text">Tu peux te connecter via ton compte Facebook ou Google. Uniquement le nom, l'adresse email et la photo de profil seront utiliser par le site.</p>
+        <p class="card-text">Aucune publication de notre part sur Facebook.</p>
+        <div class="text-center">
+          <button class="btn btn-danger m-1 mr-xl-4 mr-0" (click)="signIn('google')">Connexion avec Google</button>
+          <button class="btn btn-primary m-1 ml-xl-4 ml-0" (click)="signIn('facebook')">Connexion avec Facebook
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
