@@ -38,8 +38,23 @@ public class ThemeParkApplication implements CommandLineRunner {
         roleRepository.save(role2);
 
         Park park = new Park();
-        park.setName("TestName");
+        park.setName("Astérix");
+        park.setURLFlag("https://www.countryflags.io/fr/shiny/64.png");
         parkRepository.save(park);
 
+        Park park2 = new Park();
+        park2.setName("Disney");
+        park2.setURLFlag("https://www.countryflags.io/fr/shiny/64.png");
+        parkRepository.save(park2);
+
+        Park park3 = new Park();
+        park3.setName("Europa Park");
+        park3.setURLFlag("https://www.countryflags.io/de/shiny/64.png");
+        parkRepository.save(park3);
+
+        Park park4 = new Park();
+        park4.setName("Europa Park2");
+        park4.setURLFlag("https://www.countryflags.io/de/shiny/64.png");
+        parkRepository.save(park4);
     }
 }

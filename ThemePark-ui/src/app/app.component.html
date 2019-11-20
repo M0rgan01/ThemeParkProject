@@ -13,31 +13,30 @@
 
   <!--PARTIE GAUCHE-->
 
-  <a class="navbar-brand ml-2 text-white cliquable p-0" routerLink="/products">
+  <a class="navbar-brand ml-2 text-white cliquable p-0" routerLink="/home">
     <img src="../assets/img/logo.png" alt="Profile picture" class="logo">
     <span class="align-middle ml-2">{{title}}</span>
   </a>
 
-  <button (click)="onSwitchToggle()" type="button" class="btn mr-auto d-none d-lg-block"><span style="color: white"
+  <button (click)="isToggledSideBar = !isToggledSideBar" type="button" class="btn mr-auto d-none d-lg-block"><span
+    style="color: white"
     class="fa fa-bars fa-lg align-middle"></span></button>
 
-  <button class="btn d-lg-none" type="button" data-toggle="collapse" data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false" aria-label="Toggle navigation">
+  <button (click)="isToggledNavBar = !isToggledNavBar" type="button" class="btn d-lg-none">
     <span style="color: white" class="fa fa-bars fa-lg align-middle"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div class="collapse navbar-collapse" [ngbCollapse]="!isToggledNavBar">
     <ul class="navbar-nav">
 
       <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/park">
+        <a class="nav-link text-white" routerLink="/park" (click)="isToggledNavBar = false">
           Les parcs
         </a>
       </li>
 
 
-     <!-- CONTENU PETIT ECRAN -->
+      <!-- CONTENU PETIT ECRAN -->
       <li class="nav-item dropdown d-md-block d-lg-none">
         <a class="nav-link dropdown-toggle" href="#" id="smallerscreenmenu" data-toggle="dropdown"
            aria-haspopup="true"
@@ -75,16 +74,26 @@
       <form class="form-inline d-sm-block d-lg-none">
         <div class="input-group">
           <div class="input-group-prepend">
-            <div class="input-group-text cliquable">&#xF002;</div>
+            <div class="input-group-text">&#xF002;</div>
           </div>
-          <input class="form-control pr-0" type="search" placeholder="Recherche" aria-label="Search" ngModel name="name"
-                 required>
+          <input id="typeahead-http1" type="text" class="form-control" [class.is-invalid]="searchFailed"
+                 [ngbTypeahead]="search"
+                 [resultFormatter]="formatter" [inputFormatter]="formatter" [resultTemplate]="rt"
+                 placeholder="Recherche"/>
         </div>
       </form>
       <!--FIN CONTENU PETIT ECRAN-->
 
     </ul>
   </div>
+
+
+  <ng-template #rt let-r="result" let-t="term">
+    <div (click)="submitSearch(r)">
+      <img [src]="r.urlflag" class="mr-2" style="width: 16px" [alt]="r.name">
+      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+    </div>
+  </ng-template>
 
   <!--PARTIE DROITE-->
 
@@ -93,22 +102,24 @@
       <form class="form-inline">
         <div class="input-group">
           <div class="input-group-prepend">
-            <div class="input-group-text cliquable">&#xF002;</div>
+            <div class="input-group-text">&#xF002;</div>
           </div>
-            <input class="form-control pr-0" type="search" placeholder="Recherche" aria-label="Search" ngModel name="name"
-                   required>
-          </div>
+          <input id="typeahead-http2" type="text" class="form-control" [class.is-invalid]="searchFailed"
+                 [ngbTypeahead]="search"
+                 [resultFormatter]="formatter" [inputFormatter]="formatter" [resultTemplate]="rt"
+                 placeholder="Recherche"/>
+        </div>
       </form>
 
-      <li *ngIf="authService.isAuth()" class="nav-item dropdown">
+      <li *ngIf="authService.isAuth()" class="nav-item dropdown ml-3">
 
-        <a class="nav-link dropdown-toggle p-0 text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-           aria-haspopup="true" aria-expanded="false">
-          <img [src]="authService.getPhotoURL()" alt="Profile picture" class="img-rounded ml-4">
-          <span class="align-middle ml-2">{{authService.getUserName()}}</span>
+        <a class="nav-link dropdown-toggle p-0 text-white cliquable" (click)="isCollapsedAccount = !isCollapsedAccount"
+           [attr.aria-expanded]="isCollapsedAccount" aria-controls="collapse2">
+          <img [src]="authService.getPhotoURL()" alt="Profile picture" class="img-rounded mx-2">
+          <span class="align-middle">{{authService.getUserName()}}</span>
         </a>
 
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <div class="dropdown-menu ml-4" id="collapse2" [ngbCollapse]="!isCollapsedAccount">
 
         </div>
 
@@ -122,29 +133,32 @@
 <div *ngIf="!isHide" class="row h-100 m-0 pt-5" id="body-row">
   <!-- Sidebar -->
   <div class="d-none d-lg-block col-2 p-0 border-right side-bar-bg"
-       [ngClass]="{'d-lg-block': isToggled, 'd-lg-none': !isToggled}">
+       [ngClass]="{'d-lg-block': isToggledSideBar, 'd-lg-none': !isToggledSideBar}">
 
     <ul class="list-group sticky-offset sticky-top list-group-flush pt-5">
 
-     <!-- <li class="list-group-item font-weight-bold mt-3" *ngIf="authService.isAuth()">
-        Bonjour {{authService.getUserName()}}
-      </li>-->
+      <!-- <li class="list-group-item font-weight-bold mt-3" *ngIf="authService.isAuth()">
+         Bonjour {{authService.getUserName()}}
+       </li>-->
 
-      <a *ngIf="!authService.isAuth()" routerLinkActive="text-dark font-weight-bold" routerLink="/register"
-         class="list-group-item border-0 side-bar-bg">Inscription</a>
-      <a *ngIf="!authService.isAuth()" routerLinkActive="text-dark font-weight-bold" routerLink="/login"
-         class="list-group-item border-0 side-bar-bg">Authentification</a>
+      <a routerLinkActive="font-weight-bold active-bg" routerLink="/home"
+         class="list-group-item border-0 side-bar-bg"><i class="fas fa-home mr-2"></i>Accueil</a>
+
+      <a *ngIf="!authService.isAuth()" routerLink="/login"
+         class="list-group-item border-0 side-bar-bg"><i class="fas fa-lock mr-2"></i>Authentification</a>
 
       <!-- /END Separator -->
       <!-- Menu with submenu -->
-      <a *ngIf="authService.isAuth()" href="#submenu1" data-toggle="collapse" aria-expanded="false"
+      <a *ngIf="authService.isAuth()" (click)="isCollapsedAccount = !isCollapsedAccount"
+         [attr.aria-expanded]="isCollapsedAccount" aria-controls="collapse1"
          class="side-bar-bg font-weight-bold list-group-item list-group-item-action flex-column align-items-start border-0">
         <div class="d-flex w-100 justify-content-start align-items-center">
           <span>Mon compte</span><span class="ml-2 dropdown-toggle"></span>
         </div>
       </a>
+
       <!-- Submenu content -->
-      <div *ngIf="authService.isAuth()" id="submenu1" class="collapse">
+      <div *ngIf="authService.isAuth()" id="collapse1" [ngbCollapse]="!isCollapsedAccount" class="collapse">
         <a routerLink="/account" class="list-group-item list-group-item-action text-white bg-dark">
           <span class="ml-2">Modifier mon compte</span>
         </a>
@@ -157,28 +171,21 @@
         </a>
       </div>
 
-      <!-- Menu with submenu -->
-      <a *ngIf="authService.isAuth() && authService.isAdmin()" href="#submenu2" data-toggle="collapse"
-         aria-expanded="false"
-         class="bg-primary font-weight-bold list-group-item list-group-item-action flex-column align-items-start border-0">
+      <a *ngIf="authService.isAuth() && authService.isAdmin()" (click)="isCollapsedAdmin = !isCollapsedAdmin"
+         [attr.aria-expanded]="isCollapsedAccount" aria-controls="collapse3"
+         class="side-bar-bg font-weight-bold list-group-item list-group-item-action flex-column align-items-start border-0">
         <div class="d-flex w-100 justify-content-start align-items-center">
-          <span>Administration</span><span class="ml-2 dropdown-toggle"></span>
+          <span><i class="fas fa-tools mr-2"></i>Administration</span><span class="ml-2 dropdown-toggle"></span>
         </div>
       </a>
-      <!-- Submenu content -->
-      <div *ngIf="authService.isAuth() && authService.isAdmin()" id="submenu2" class="collapse">
-        <a class="list-group-item list-group-item-action text-white bg-dark cliquable"
-           [routerLink]="['/orders', 'admin']"><span class="ml-2">Commande</span></a>
-        <a class="list-group-item list-group-item-action text-white bg-dark cliquable"
-           routerLink="/product/create"><span class="ml-2">Produit</span></a>
-        <a class="list-group-item list-group-item-action text-white bg-dark cliquable"
-           routerLink="/category/create"><span class="ml-2">Catégorie</span></a>
-        <a class="list-group-item list-group-item-action text-white bg-dark cliquable"
-           routerLink="/farmer/create"><span class="ml-2">Agriculteur</span></a>
+      <div *ngIf="authService.isAuth() && authService.isAdmin()" id="collapse3" [ngbCollapse]="!isCollapsedAdmin"
+           class="collapse">
+
       </div>
 
-      <a routerLinkActive="text-dark font-weight-bold" routerLink="/about"
-         class="list-group-item list-group-item-action border-0 side-bar-bg">À-propos</a>
+
+      <a routerLinkActive="font-weight-bold active-bg" routerLink="/about"
+         class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-info-circle mr-2"></i>À-propos</a>
 
     </ul>
     <!-- List Group END-->

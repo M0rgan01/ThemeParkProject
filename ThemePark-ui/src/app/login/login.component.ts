@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       const jwtAuth = resp.headers.get('Authorization');
       const jwtRefresh = resp.headers.get('refresh');
       // on enregistrons le jwt dans le localStorage d'angular
-      this.authService.saveToken(jwtAuth, jwtRefresh);
+      this.authService.saveTokens(jwtAuth, jwtRefresh);
       this.router.navigateByUrl('/');
       console.log('success');
     }, err => {

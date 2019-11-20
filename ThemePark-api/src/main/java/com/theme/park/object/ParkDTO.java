@@ -52,8 +52,13 @@ public class ParkDTO {
     private int attractionNumber;
 
     @ApiModelProperty(notes = "URL officiel du parc", example = "https://www.europapark.de/fr")
-    @Size(max = 255, message = "park.URL.max.value.not.correct")
+    @Size(max = 255, message = "park.url.max.value.not.correct")
     private String URL;
+
+    @ApiModelProperty(notes = "URL de l'image du drapeau du pays", example = "https://www.countryflags.io/be/flat/64.png")
+    @Size(max = 255, message = "park.url.flag.max.value.not.correct")
+    @NotBlank(message = "park.url.flag.empty")
+    private String URLFlag;
 
     @ApiModelProperty(notes = "Information sur l'ouverture du parc", example = "Ouvert toute l'année")
     private String opening;

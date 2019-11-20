@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../service/authentification.service';
 import {NavigationEnd, Router} from '@angular/router';
+import {Observable, of} from 'rxjs';
+import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {APIService} from '../service/api.service';
 
 @Component({
   selector: 'app-root',
@@ -9,21 +12,24 @@ import {NavigationEnd, Router} from '@angular/router';
 })
 export class AppComponent implements OnInit {
   public title = 'Park Trip';
-  public isToggled = false;
-  public listEmptyViewPath = ['login'];
-  public isHide = false;
 
-  constructor(private authService: AuthenticationService, public route: Router) {
-  }
+  private isToggledNavBar = false;
+  private isToggledSideBar = false;
+  private isCollapsedAccount = false;
+  private isCollapsedAdmin = false;
 
-// déroulement de la sidebar
-  onSwitchToggle() {
-    if (this.isToggled) {
-      this.isToggled = false;
-    } else if (!this.isToggled) {
-      this.isToggled = true;
-    }
-  }
+  // affichage component sans side/nav bar
+  private listEmptyViewPath = ['login'];
+  private isHide = false;
+
+  private searching = false;
+  private searchFailed = false;
+
+  public formatter = (x: {name: string}) => x.name;
+
+  constructor(private authService: AuthenticationService,
+              public route: Router,
+              public api: APIService) { }
 
   ngOnInit(): void {
     this.route.events.subscribe((val) => {
@@ -38,5 +44,27 @@ export class AppComponent implements OnInit {
         }
       });
     });
+  }
+
+  search = (text: Observable<string>) =>
+    text.pipe(
+      // attend avant chaque frappe
+      debounceTime(300),
+      // échappe text identique
+      distinctUntilChanged(),
+      tap(() => this.searching = true),
+      switchMap(term =>
+        this.api.search(term).pipe(
+          tap(() => this.searchFailed = false),
+          catchError(() => {
+            this.searchFailed = true;
+            return of([]);
+          }))
+      ),
+      tap(() => this.searching = false)
+    )
+
+  submitSearch(name: string) {
+    console.log(name);
   }
 }

@@ -5,9 +5,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @ApiModel(description = "Représente les données permettant la recherche précise d'un park")
 public class SearchCriteria {
     @ApiModelProperty(notes = "clé de l'attribut", example = "quantity", required = true)

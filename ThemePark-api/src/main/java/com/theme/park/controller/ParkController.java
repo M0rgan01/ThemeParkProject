@@ -1,5 +1,7 @@
 package com.theme.park.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theme.park.business.ParkBusiness;
 import com.theme.park.doa.specification.SearchCriteria;
 import com.theme.park.entities.Park;
@@ -16,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 @Api( description="API de création, modification et recherche de parcs")
@@ -35,7 +39,7 @@ public class ParkController {
             @ApiResponse(code = 404, message = "Aucune correspondance"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @GetMapping(value = "/userRole/parkById/{id}")
+    @GetMapping(value = "/public/parkById/{id}")
     public ResponseEntity<?> getParkById(@PathVariable Long id) throws NotFoundException {
 
         Park park = parkBusiness.findById(id);
@@ -50,10 +54,15 @@ public class ParkController {
             @ApiResponse(code = 406, message = "Erreur de critère"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @GetMapping(value = "/userRole/parks/{page}/{size}")
-    public ResponseEntity<?> searchParks(@PathVariable int page, @PathVariable int size, @RequestBody(required=false) List<SearchCriteria> searchCriteriaList) throws CriteriaException {
+    @GetMapping(value = "/public/parks/{page}/{size}")
+    public ResponseEntity<?> searchParks(@PathVariable int page, @PathVariable int size, @RequestParam(required = false) String values) throws CriteriaException, IOException {
 
-        Page<Park> parks = parkBusiness.searchParks(searchCriteriaList, page, size);
+    byte[] bValues = Base64.getDecoder().decode(values.getBytes());
+    String json = new String(bValues);
+    ObjectMapper mapper = new ObjectMapper();
+    List<SearchCriteria> searchCriteriaList = mapper.readValue(json, new TypeReference<List<SearchCriteria>>(){});
+
+    Page<Park> parks = parkBusiness.searchParks(searchCriteriaList, page, size);
 
         return ResponseEntity.ok().body(parks);
     }
