@@ -6,9 +6,9 @@ import {Router} from '@angular/router';
 @Injectable()
 export class AuthenticationService {
 
-  public jwtTokenAuth: string = null;
-  public jwtTokenRefresh: string = null;
-  private roles: Array<any> = null;
+  private jwtTokenAuth: string;
+  private jwtTokenRefresh: string;
+  private roles: Array<any>;
 
   constructor(private http: HttpClient,
               private jwtHelper: JwtHelperService,
@@ -26,9 +26,13 @@ export class AuthenticationService {
   }
 
   // sauvegarde du token dans le local storage
-  saveToken(jwtAuth: string, jwtRefresh: string) {
+  saveTokens(jwtAuth: string, jwtRefresh: string) {
     localStorage.setItem('tokenAuth', jwtAuth);
     localStorage.setItem('tokenRefresh', jwtRefresh);
+  }
+
+  saveAuthToken(jwtAuth: string) {
+    localStorage.setItem('tokenAuth', jwtAuth);
   }
 
   // chargement du token d'auth

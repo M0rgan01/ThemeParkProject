@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialLoginModule} from 'angularx-social-login';
 import {LoginComponent} from './login/login.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {APIService} from '../service/api.service';
 import {AppRoutingModule} from './app-routing.module';
@@ -18,6 +18,9 @@ import {AccountComponent} from './account/account.component';
 import {AboutComponent} from './about/about.component';
 import {EditParkComponent} from './edit-park/edit-park.component';
 import {HomeComponent} from './home/home.component';
+import {FormsModule} from '@angular/forms';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {TokenInterceptor} from '../interceptor/http-interceptor';
 
 const config = new AuthServiceConfig([
   {
@@ -58,12 +61,24 @@ export function tokenGetters() {
     HomeComponent
   ],
   imports: [
-    BrowserModule, SocialLoginModule, HttpClientModule, AppRoutingModule,  JwtModule.forRoot(JWTModuleOptions),
+    BrowserModule,
+    FormsModule,
+    SocialLoginModule,
+    HttpClientModule,
+    AppRoutingModule,
+    NgbModule,
+    JwtModule.forRoot(JWTModuleOptions)
   ],
-  providers: [ APIService, AuthGuardService, AuthenticationService, {
+  providers: [APIService, AuthGuardService, AuthenticationService, {
     provide: AuthServiceConfig,
     useFactory: provideConfig
-  }],
+  },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

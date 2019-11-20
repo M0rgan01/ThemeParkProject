@@ -23,6 +23,7 @@ public class Park {
     private String GPS;
     private int attractionNumber;
     private String URL;
+    private String URLFlag;
     private String opening;
     private Date dateCreation;
     private Date openingDate;

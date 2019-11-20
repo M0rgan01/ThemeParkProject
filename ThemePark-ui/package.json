@@ -12,7 +12,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~8.2.10",
     "@angular/common": "~8.2.10",
     "@angular/compiler": "~8.2.10",
     "@angular/core": "~8.2.10",
@@ -22,10 +21,9 @@
     "@angular/router": "~8.2.10",
     "@auth0/angular-jwt": "^3.0.1",
     "@fortawesome/fontawesome-free": "^5.11.2",
+    "@ng-bootstrap/ng-bootstrap": "^5.1.4",
     "angularx-social-login": "^2.1.1",
     "bootstrap": "^4.3.1",
-    "jquery": "^3.4.1",
-    "popper.js": "^1.16.0",
     "rxjs": "~6.5.3",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"

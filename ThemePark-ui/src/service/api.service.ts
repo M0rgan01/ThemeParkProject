@@ -1,48 +1,70 @@
 import {Injectable,} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, throwError, timer} from 'rxjs';
-import {mergeMap, retryWhen} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {SocialUser} from 'angularx-social-login';
+import {Park} from '../model/park.model';
+import {Page} from '../model/page.model';
+import {SearchCriteria} from '../model/search-criteria.model';
+import {AuthenticationService} from './authentification.service';
 
 
 @Injectable()
 export class APIService {
 
- host = 'http://localhost:8088/themeParkAPI';
+  private host = 'http://localhost:8088/themeParkAPI';
+  private searchCriteria: SearchCriteria;
+  private listSearchCriteria: Array<SearchCriteria>;
+  private autoCompleteSize = 5;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient,
+              private router: Router,
+              private authService: AuthenticationService) {
   }
 
 
   /////////////////////////////// AUTHENTICATION /////////////////////////////////
 
-  // méthode de connection d'un utilisateur
   login(user: SocialUser) {
-    console.log(user);
     return this.http.post(this.host + '/auth/login', user, {observe: 'response'});
   }
 
   sendRefreshToken() {
-    return this.http.get(this.host + '/auth/token', {observe: 'response'});
+    return this.http.get(this.host + '/auth/refresh', {
+      observe: 'response',
+      headers: {refresh: this.authService.getTokenRefresh()}
+    });
   }
 
   /////////////////////////////// RESSOURCES /////////////////////////////////
 
   getRessources<T>(url): Observable<T> {
-    return this.http.get<T>(this.host + url).pipe(
-      retryWhen(this.genericRetryStrategy()));
+    return this.http.get<T>(this.host + url);
   }
 
   putRessources<T>(url, obj): Observable<T> {
-    return this.http.put<T>(this.host + url, obj).pipe(
-      retryWhen(this.genericRetryStrategy()));
+    return this.http.put<T>(this.host + url, obj);
   }
 
-
   postRessources<T>(url, obj): Observable<T> {
-    return this.http.post<T>(this.host + url, obj).pipe(
-      retryWhen(this.genericRetryStrategy()));
+    return this.http.post<T>(this.host + url, obj);
+  }
+
+  /////////////////////////////// RESSOURCES AUTOCOMPLETE  /////////////////////////////////
+
+  search(term: string) {
+
+    if (term === '') {
+      return of([]);
+    }
+
+    this.listSearchCriteria = new Array<SearchCriteria>();
+    this.searchCriteria = new SearchCriteria('name', ':', term);
+    this.listSearchCriteria.push(this.searchCriteria);
+
+    return this.http.get<Page<Park>>(this.host + '/public/parks/0/' + this.autoCompleteSize + '?values=' +
+      btoa(JSON.stringify(this.listSearchCriteria))).pipe(map(response => response.content));
   }
 
 
@@ -56,36 +78,5 @@ export class APIService {
 
   redirectToNotFound() {
     this.router.navigateByUrl('/404');
-  }
-
-  /////////////////////////////// RETRY /////////////////////////////////
-
-  genericRetryStrategy = ({
-                            maxRetryAttempts = 1,
-                            scalingDuration = 200,
-                            onlyStatusCodes = [401]
-                          }: {
-    maxRetryAttempts?: number,
-    scalingDuration?: number,
-    onlyStatusCodes?: number[]
-  } = {}) => (attempts: Observable<any>) => {
-    return attempts.pipe(
-      mergeMap((error, i) => {
-        const retryAttempt = i + 1;
-        // if maximum number of retries have been met
-        // or response is a status code we don't wish to retry, throw error
-        if (
-          retryAttempt > maxRetryAttempts ||
-          !onlyStatusCodes.find(e => e === error.status)
-        ) {
-          return throwError(error);
-        }
-        console.log(
-          `Attempt ${retryAttempt}: retrying in ${retryAttempt *
-          scalingDuration}ms`
-        );
-        // retry after 1s, 2s, etc...
-        return timer(retryAttempt * scalingDuration);
-      }));
   }
 }
