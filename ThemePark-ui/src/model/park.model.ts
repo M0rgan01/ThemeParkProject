@@ -1,13 +1,14 @@
+import {Country} from './country.model';
+
 export class Park {
   id: number;
   name: string;
   globalNotation: number;
-  country: string;
+  country: Country;
   location: string;
-  GPS: string;
+  gps: string;
   attractionNumber: string;
-  url: string;
-  urlFlag: string;
+  officialUrl: string;
   opening: string;
   dateCreation: Date;
   openingDate: Date;

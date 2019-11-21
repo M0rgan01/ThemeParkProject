@@ -17,7 +17,8 @@ export const routes: Routes = [
   {path: 'park/:id', component: ParkComponent},
   {path: 'about', component: AboutComponent},
   {path: 'error', component: ErrorComponent},
-  {path: 'edit-park', canActivate: [AuthGuardService], component: EditParkComponent},
+  {path: 'admin', canActivate: [AuthGuardService], children: [
+    {path: 'park/:operation', component: EditParkComponent}]},
   {path: 'not-found', component: FourHoFourComponent},
   {path: '**', redirectTo: 'not-found'}
 ];

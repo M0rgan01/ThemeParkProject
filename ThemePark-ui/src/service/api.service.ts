@@ -53,7 +53,7 @@ export class APIService {
 
   /////////////////////////////// RESSOURCES AUTOCOMPLETE  /////////////////////////////////
 
-  search(term: string) {
+  searchPark(term: string) {
 
     if (term === '') {
       return of([]);
@@ -67,6 +67,19 @@ export class APIService {
       btoa(JSON.stringify(this.listSearchCriteria))).pipe(map(response => response.content));
   }
 
+  searchCountry(term: string) {
+
+    if (term === '') {
+      return of([]);
+    }
+
+    this.listSearchCriteria = new Array<SearchCriteria>();
+    this.searchCriteria = new SearchCriteria('countryNameEn', ':', term);
+    this.listSearchCriteria.push(this.searchCriteria);
+
+    return this.http.get<Page<Park>>(this.host + '/public/countries/0/' + this.autoCompleteSize + '?values=' +
+      btoa(JSON.stringify(this.listSearchCriteria))).pipe(map(response => response.content));
+  }
 
   /////////////////////////////// ERROR /////////////////////////////////
 

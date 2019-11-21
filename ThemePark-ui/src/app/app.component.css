@@ -22,12 +22,12 @@
 }
 
 /*lien sidebar*/
-.side-bar-bg ul :hover{
+.side-bar-bg div :hover{
   text-decoration: none;
   background: #A3A3A3;
 }
 /*lien déroulant sidebar*/
-.side-bar-bg ul div :hover{
+.side-bar-bg div div :hover{
   background: none;
 }
 

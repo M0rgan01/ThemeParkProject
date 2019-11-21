@@ -89,9 +89,9 @@
 
 
   <ng-template #rt let-r="result" let-t="term">
-    <div (click)="submitSearch(r)">
-      <img [src]="r.urlflag" class="mr-2" style="width: 16px" [alt]="r.name">
+    <div class="d-flex" (click)="submitSearch(r)">
       <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+      <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px" [alt]="r.name">
     </div>
   </ng-template>
 
@@ -111,16 +111,15 @@
         </div>
       </form>
 
-      <li *ngIf="authService.isAuth()" class="nav-item dropdown ml-3">
+      <li *ngIf="authService.isAuth()" ngbDropdown class="nav-item ml-3">
 
-        <a class="nav-link dropdown-toggle p-0 text-white cliquable" (click)="isCollapsedAccount = !isCollapsedAccount"
-           [attr.aria-expanded]="isCollapsedAccount" aria-controls="collapse2">
+        <a class="nav-link dropdown-toggle p-0 text-white cliquable" ngbDropdownToggle id="accountDropDown">
           <img [src]="authService.getPhotoURL()" alt="Profile picture" class="img-rounded mx-2">
           <span class="align-middle">{{authService.getUserName()}}</span>
         </a>
 
-        <div class="dropdown-menu ml-4" id="collapse2" [ngbCollapse]="!isCollapsedAccount">
-
+        <div ngbDropdownMenu aria-labelledby="accountDropDown" class="dropdown-menu ml-2 cliquable">
+          <a class="dropdown-item" (click)="authService.signOut()"><i class="fas fa-sign-out-alt mr-2"></i>Se déconnecter</a>
         </div>
 
       </li>
@@ -132,62 +131,39 @@
 <!-- SIDEBAR https://www.codeply.com/go/7XYosZ7VH5 -->
 <div *ngIf="!isHide" class="row h-100 m-0 pt-5" id="body-row">
   <!-- Sidebar -->
-  <div class="d-none d-lg-block col-2 p-0 border-right side-bar-bg"
+  <div class="d-none d-lg-block col-xl-2 col-lg-3 p-0 border-right side-bar-bg"
        [ngClass]="{'d-lg-block': isToggledSideBar, 'd-lg-none': !isToggledSideBar}">
 
-    <ul class="list-group sticky-offset sticky-top list-group-flush pt-5">
-
-      <!-- <li class="list-group-item font-weight-bold mt-3" *ngIf="authService.isAuth()">
-         Bonjour {{authService.getUserName()}}
-       </li>-->
+    <div class="list-group sticky-offset sticky-top list-group-flush pt-5">
 
       <a routerLinkActive="font-weight-bold active-bg" routerLink="/home"
-         class="list-group-item border-0 side-bar-bg"><i class="fas fa-home mr-2"></i>Accueil</a>
+         class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-home mr-2"></i>Accueil</a>
 
       <a *ngIf="!authService.isAuth()" routerLink="/login"
-         class="list-group-item border-0 side-bar-bg"><i class="fas fa-lock mr-2"></i>Authentification</a>
+         class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-lock mr-2"></i>Authentification</a>
 
       <!-- /END Separator -->
       <!-- Menu with submenu -->
-      <a *ngIf="authService.isAuth()" (click)="isCollapsedAccount = !isCollapsedAccount"
-         [attr.aria-expanded]="isCollapsedAccount" aria-controls="collapse1"
-         class="side-bar-bg font-weight-bold list-group-item list-group-item-action flex-column align-items-start border-0">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          <span>Mon compte</span><span class="ml-2 dropdown-toggle"></span>
-        </div>
+      <a *ngIf="authService.isAuth()" (click)="isCollapsedAdmin = !isCollapsedAdmin"
+         [attr.aria-expanded]="isCollapsedAdmin" aria-controls="collapse1"
+         class="list-group-item list-group-item-action border-0 side-bar-bg cliquable">
+        <i class="fas fa-tools mr-2"></i>Administration<i class="ml-2 fas" [ngClass]="!isCollapsedAdmin ? 'fa-caret-down' : 'fa-caret-up'" ></i>
       </a>
 
       <!-- Submenu content -->
-      <div *ngIf="authService.isAuth()" id="collapse1" [ngbCollapse]="!isCollapsedAccount" class="collapse">
-        <a routerLink="/account" class="list-group-item list-group-item-action text-white bg-dark">
-          <span class="ml-2">Modifier mon compte</span>
+      <div *ngIf="authService.isAuth()" id="collapse1" [ngbCollapse]="!isCollapsedAdmin" class="collapse">
+        <a routerLink="/admin/park/create" class="list-group-item list-group-item-action text-white bg-dark">
+          <i class="fas fa-plus-circle mx-2"></i>Ajouter un parc
         </a>
-        <a routerLink="/orders" class="list-group-item list-group-item-action text-white bg-dark">
-          <span class="ml-2">Mes commandes</span>
-        </a>
-        <a (click)="authService.signOut()"
-           class="list-group-item list-group-item-action text-white bg-dark cliquable">
-          <span class="ml-2">Se déconnecter</span>
+        <a routerLink="/admin/park/edit" class="list-group-item list-group-item-action text-white bg-dark">
+          <i class="fas fa-edit mx-2"></i>Modifier un parc
         </a>
       </div>
-
-      <a *ngIf="authService.isAuth() && authService.isAdmin()" (click)="isCollapsedAdmin = !isCollapsedAdmin"
-         [attr.aria-expanded]="isCollapsedAccount" aria-controls="collapse3"
-         class="side-bar-bg font-weight-bold list-group-item list-group-item-action flex-column align-items-start border-0">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          <span><i class="fas fa-tools mr-2"></i>Administration</span><span class="ml-2 dropdown-toggle"></span>
-        </div>
-      </a>
-      <div *ngIf="authService.isAuth() && authService.isAdmin()" id="collapse3" [ngbCollapse]="!isCollapsedAdmin"
-           class="collapse">
-
-      </div>
-
 
       <a routerLinkActive="font-weight-bold active-bg" routerLink="/about"
          class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-info-circle mr-2"></i>À-propos</a>
 
-    </ul>
+    </div>
     <!-- List Group END-->
   </div>
   <!-- sidebar-container END -->

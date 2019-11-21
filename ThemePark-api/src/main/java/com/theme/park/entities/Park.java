@@ -18,12 +18,10 @@ public class Park {
     private Long id;
     private String name;
     private float globalNotation;
-    private String country;
     private String location;
-    private String GPS;
+    private String gps;
     private int attractionNumber;
-    private String URL;
-    private String URLFlag;
+    private String officialUrl;
     private String opening;
     private Date dateCreation;
     private Date openingDate;
@@ -31,4 +29,6 @@ public class Park {
     private List<Comment> comments;
     @ElementCollection(targetClass=String.class)
     private List<String> photoList;
+    @ManyToOne
+    private Country country;
 }
