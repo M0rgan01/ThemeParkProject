@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   }
 
   getPark() {
-    this.api.getRessources<Park>('/userRole/parkById/1').subscribe(value => {
+    this.api.getRessources<Park>('/public/parkById/1').subscribe(value => {
       this.park = value;
     });
   }

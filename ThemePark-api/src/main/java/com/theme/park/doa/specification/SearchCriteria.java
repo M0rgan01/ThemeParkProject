@@ -1,11 +1,17 @@
 package com.theme.park.doa.specification;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,4 +25,11 @@ public class SearchCriteria {
     private String operation;
     @ApiModelProperty(notes = "Valeur de l'attribut", example = "12", required = true)
     private Object value;
+
+    public static List<SearchCriteria> convertBase64Url(String base64Url, ObjectMapper mapper) throws IOException {
+        byte[] bValues = Base64.getDecoder().decode(base64Url.getBytes());
+        String json = new String(bValues);
+        return mapper.readValue(json, new TypeReference<List<SearchCriteria>>(){});
+    }
+
 }

@@ -15,7 +15,6 @@ export class AppComponent implements OnInit {
 
   private isToggledNavBar = false;
   private isToggledSideBar = false;
-  private isCollapsedAccount = false;
   private isCollapsedAdmin = false;
 
   // affichage component sans side/nav bar
@@ -54,7 +53,7 @@ export class AppComponent implements OnInit {
       distinctUntilChanged(),
       tap(() => this.searching = true),
       switchMap(term =>
-        this.api.search(term).pipe(
+        this.api.searchPark(term).pipe(
           tap(() => this.searchFailed = false),
           catchError(() => {
             this.searchFailed = true;

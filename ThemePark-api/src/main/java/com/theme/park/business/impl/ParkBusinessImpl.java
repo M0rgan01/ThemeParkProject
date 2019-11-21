@@ -2,8 +2,8 @@ package com.theme.park.business.impl;
 
 import com.theme.park.business.ParkBusiness;
 import com.theme.park.doa.ParkRepository;
-import com.theme.park.doa.specification.ParkSpecificationBuilder;
 import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Comment;
 import com.theme.park.entities.Park;
 import com.theme.park.exception.AlreadyExistException;
@@ -43,7 +43,7 @@ public class ParkBusinessImpl implements ParkBusiness {
         if (searchCriteria == null)
             searchCriteria = new ArrayList<>();
 
-        ParkSpecificationBuilder builder = new ParkSpecificationBuilder(searchCriteria);
+        SpecificationBuilder builder = new SpecificationBuilder<Park>(searchCriteria);
         Specification<Park> spec = builder.build();
 
         logger.debug("searching park with " + searchCriteria.size() + " criteria list size for page " + page + " with size " + size);

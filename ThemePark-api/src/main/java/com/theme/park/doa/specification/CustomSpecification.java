@@ -1,6 +1,5 @@
 package com.theme.park.doa.specification;
 
-import com.theme.park.entities.Park;
 import com.theme.park.exception.CriteriaException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -8,13 +7,18 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.*;
 import java.util.Date;
 
+/**
+ * @author PICHAT morgan
+ *
+ * @param <T>
+ */
 @AllArgsConstructor
-public class ParkSpecification implements Specification<Park> {
+public class CustomSpecification<T> implements Specification<T> {
 
     private SearchCriteria criteria;
 
     @Override
-    public Predicate toPredicate(Root<Park> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         // évite les doublons
         query.distinct(true);
         Path path;
