@@ -2,11 +2,10 @@ package com.theme.park.business.impl;
 
 import com.theme.park.business.CommentBusiness;
 import com.theme.park.business.ParkBusiness;
+import com.theme.park.business.SocialUserBusiness;
 import com.theme.park.doa.CommentRepository;
 import com.theme.park.entities.Comment;
 import com.theme.park.exception.NotFoundException;
-import com.theme.park.object.CommentDTO;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,19 +19,21 @@ public class CommentBusinessImpl implements CommentBusiness {
 
     private CommentRepository commentRepository;
     private ParkBusiness parkBusiness;
-    private ModelMapper modelMapper;
+    private SocialUserBusiness socialUserBusiness;
     private static final Logger logger = LoggerFactory.getLogger(CommentBusinessImpl.class);
 
-    public CommentBusinessImpl(CommentRepository commentRepository, ModelMapper modelMapper, ParkBusiness parkBusiness) {
-        this.modelMapper = modelMapper;
+    public CommentBusinessImpl(CommentRepository commentRepository,
+                               ParkBusiness parkBusiness,
+                               SocialUserBusiness socialUserBusiness) {
         this.commentRepository = commentRepository;
         this.parkBusiness = parkBusiness;
+        this.socialUserBusiness = socialUserBusiness;
     }
 
     @Override
     @Transactional
-    public Comment createComment(CommentDTO commentDTO) throws NotFoundException {
-        Comment comment = modelMapper.map(commentDTO, Comment.class);
+    public Comment createComment(Comment comment) throws NotFoundException {
+        comment.setSocialUser(socialUserBusiness.getSocialUserByEmail(comment.getSocialUser().getEmail(), comment.getSocialUser().getProvider()));
         comment.setDate(new Date());
         comment = commentRepository.save(comment);
         logger.info("Create comment with id " + comment.getId());
@@ -42,8 +43,8 @@ public class CommentBusinessImpl implements CommentBusiness {
 
     @Override
     @Transactional
-    public Comment updateComment(Long id, CommentDTO commentDTO) throws NotFoundException {
-        Comment comment = modelMapper.map(commentDTO, Comment.class);
+    public Comment updateComment(Long id, Comment comment) throws NotFoundException {
+
         comment = commentRepository.save(comment);
         logger.info("Update comment with id " + id);
         parkBusiness.updateNotation(comment.getPark().getId());

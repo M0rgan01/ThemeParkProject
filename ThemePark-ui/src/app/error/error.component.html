@@ -1,1 +1,13 @@
-<p>error works!</p>
+<div class="row">
+  <div class="col-12">
+    <h2>Erreur</h2>
+  </div>
+  <div class="col-12">
+    <p *ngIf="!paramRedirect">Une erreur interne est survenue, veuillez réessayer plus tard</p>
+    <p *ngIf="paramRedirect === 'access-permission'">Vous ne disposer pas des droits d'accès pour acceder à cette ressource</p>
+  </div>
+
+</div>
+
+
+

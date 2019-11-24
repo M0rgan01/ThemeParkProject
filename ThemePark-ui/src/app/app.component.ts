@@ -4,15 +4,17 @@ import {NavigationEnd, Router} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {APIService} from '../service/api.service';
+import {Park} from '../model/park.model';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit  {
   public title = 'Park Trip';
 
+  // affichage menu déroulant / petite résolution
   private isToggledNavBar = false;
   private isToggledSideBar = false;
   private isCollapsedAdmin = false;
@@ -21,24 +23,41 @@ export class AppComponent implements OnInit {
   private listEmptyViewPath = ['login'];
   private isHide = false;
 
+  // barre de recherche
+  private park: Park;
   private searching = false;
   private searchFailed = false;
 
-  public formatter = (x: {name: string}) => x.name;
+  // Authentication info
+  private isAuth;
+  private isAdmin;
+  private photoUrl;
+  private userName;
+
+  public formatter = (x: { name: string }) => x.name;
 
   constructor(private authService: AuthenticationService,
               public route: Router,
-              public api: APIService) { }
+              public api: APIService) {
+  }
 
   ngOnInit(): void {
     this.route.events.subscribe((val) => {
       this.listEmptyViewPath.forEach(value => {
         // si la navigation arrive à terme (il y a plusieur event, donc on en garde que un pour éviter plusieur éxécution)
         if (val instanceof NavigationEnd && val.url.startsWith('/' + value)) {
-          console.log('true');
           this.isHide = true;
         } else if (val instanceof NavigationEnd && !val.url.startsWith('/' + value)) {
-          console.log('false');
+          try {
+            this.isAuth = this.authService.isAuth();
+            if (this.isAuth) {
+            //  this.isAdmin = this.authService.isAdmin();
+              this.photoUrl = this.authService.getPhotoURL();
+              this.userName = this.authService.getUserName();
+            }
+          } catch (e) {
+            this.authService.redirectToLogin('auth-error');
+          }
           this.isHide = false;
         }
       });
@@ -61,9 +80,16 @@ export class AppComponent implements OnInit {
           }))
       ),
       tap(() => this.searching = false)
-    )
+    );
 
-  submitSearch(name: string) {
-    console.log(name);
+  submitSearch(park: Park) {
+    if (park.urlName) {
+      this.route.navigateByUrl('/park/' + park.urlName);
+      // this.park = null;
+    } else {
+      this.api.redirectToNotFound();
+    }
   }
+
+
 }

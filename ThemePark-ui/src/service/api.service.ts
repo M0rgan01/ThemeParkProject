@@ -1,4 +1,4 @@
-import {Injectable,} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -13,28 +13,20 @@ import {AuthenticationService} from './authentification.service';
 @Injectable()
 export class APIService {
 
-  private host = 'http://localhost:8088/themeParkAPI';
+  public host = 'http://localhost:8088/themeParkAPI';
   private searchCriteria: SearchCriteria;
   private listSearchCriteria: Array<SearchCriteria>;
   private autoCompleteSize = 5;
 
   constructor(private http: HttpClient,
-              private router: Router,
-              private authService: AuthenticationService) {
+              private router: Router) {
   }
 
 
   /////////////////////////////// AUTHENTICATION /////////////////////////////////
 
-  login(user: SocialUser) {
-    return this.http.post(this.host + '/auth/login', user, {observe: 'response'});
-  }
-
   sendRefreshToken() {
-    return this.http.get(this.host + '/auth/refresh', {
-      observe: 'response',
-      headers: {refresh: this.authService.getTokenRefresh()}
-    });
+    return this.http.get(this.host + '/auth/refresh', {observe: 'response'});
   }
 
   /////////////////////////////// RESSOURCES /////////////////////////////////
@@ -83,11 +75,15 @@ export class APIService {
 
   /////////////////////////////// ERROR /////////////////////////////////
 
-  redirectToError() {
-    this.router.navigateByUrl('/error');
+  redirectToError(reason: string) {
+    if (reason) {
+      this.router.navigateByUrl('/error?reason=' + reason);
+    } else {
+      this.router.navigateByUrl('/error');
+    }
   }
 
-  /////////////////////////////// NotFound /////////////////////////////////
+  /////////////////////////////// NOTFOUND /////////////////////////////////
 
   redirectToNotFound() {
     this.router.navigateByUrl('/404');

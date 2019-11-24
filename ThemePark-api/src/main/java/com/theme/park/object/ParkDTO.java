@@ -1,7 +1,6 @@
 package com.theme.park.object;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.theme.park.entities.Country;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -27,14 +26,17 @@ public class ParkDTO {
     @Size(max = 100, message = "park.name.max.value.not.correct")
     private String name;
 
-    @ApiModelProperty(notes = "Notation global du parc", example = "3.6", required = true)
+    @ApiModelProperty(notes = "Nom du parc, format URL", example = "Europa park", readOnly = true)
+    private String urlName;
+
+    @ApiModelProperty(notes = "Notation global du parc", example = "3.6", readOnly = true)
     @Min(value = 0, message = "park.notation.min.value.not.correct")
     @Max(value = 5, message = "park.notation.max.value.not.correct")
     private double globalNotation;
 
     @ApiModelProperty(notes = "Pays du parc", example = "France", required = true)
     @NotNull(message = "park.country.null")
-    private Country country;
+    private CountryDTO country;
 
     @ApiModelProperty(notes = "Adresse du parc", example = "France", required = true)
     @Size(max = 255, message = "park.location.max.value.not.correct")
@@ -59,9 +61,12 @@ public class ParkDTO {
     @ApiModelProperty(notes = "URL des photos du parc")
     private List<String> photoList;
 
-    @ApiModelProperty(notes = "Date de création du parc sur l'application")
+    @ApiModelProperty(notes = "Date de création du parc sur l'application", readOnly = true)
     private Date dateCreation;
 
     @ApiModelProperty(notes = "Date de création du parc")
     private Date openingDate;
+
+    @ApiModelProperty(notes = "List de commentaires du park", readOnly = true)
+    private List<CommentDTO> comments;
 }

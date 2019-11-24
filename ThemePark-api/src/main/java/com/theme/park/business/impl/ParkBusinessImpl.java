@@ -9,8 +9,7 @@ import com.theme.park.entities.Park;
 import com.theme.park.exception.AlreadyExistException;
 import com.theme.park.exception.CriteriaException;
 import com.theme.park.exception.NotFoundException;
-import com.theme.park.object.ParkDTO;
-import org.modelmapper.ModelMapper;
+import com.theme.park.utilities.StringNormalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -29,11 +28,10 @@ import java.util.Optional;
 public class ParkBusinessImpl implements ParkBusiness {
 
     private ParkRepository parkRepository;
-    private ModelMapper modelMapper;
+
     private static final Logger logger = LoggerFactory.getLogger(ParkBusinessImpl.class);
 
-    public ParkBusinessImpl(ParkRepository parkRepository, ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public ParkBusinessImpl(ParkRepository parkRepository) {
         this.parkRepository = parkRepository;
     }
 
@@ -63,28 +61,41 @@ public class ParkBusinessImpl implements ParkBusiness {
     }
 
     @Override
-    public Park createPark(ParkDTO parkDTO) throws AlreadyExistException {
-        if (parkRepository.findByName(parkDTO.getName()).isPresent())
+    public Park findByUrlName(String urlName) throws NotFoundException {
+        Optional<Park> park = parkRepository.findByUrlName(urlName);
+
+        if (!park.isPresent())
+            throw new NotFoundException("park.not.found");
+
+        logger.debug("Getting park with urlName " + urlName);
+        return park.get();
+    }
+
+    @Override
+    public Park createPark(Park park) throws AlreadyExistException {
+
+        park.setUrlName(StringNormalizer.normalize(park.getName()));
+
+        if (parkRepository.findByUrlName(park.getUrlName()).isPresent())
             throw new AlreadyExistException("park.name.already.exist");
-        Park park = modelMapper.map(parkDTO, Park.class);
+
         park.setDateCreation(new Date());
-        logger.info("Create park with name " + parkDTO.getName());
+        logger.info("Create park with name " + park.getName());
         return parkRepository.save(park);
     }
 
     @Override
-    public Park updatePark(Long id, ParkDTO parkDTO) throws AlreadyExistException, NotFoundException {
+    public Park updatePark(Long id, Park park) throws AlreadyExistException, NotFoundException {
 
         Park parkCompare = findById(id);
 
-        if (!parkCompare.getName().equals(parkDTO.getName()))
-            if (parkRepository.findByName(parkDTO.getName()).isPresent())
+        if (!parkCompare.getName().equals(park.getName())){
+            park.setUrlName(StringNormalizer.normalize(park.getName()));
+            if (parkRepository.findByUrlName(park.getUrlName()).isPresent())
                 throw new AlreadyExistException("park.name.already.exist");
+        }
 
-
-        Park park = modelMapper.map(parkDTO, Park.class);
-
-        logger.info("Update park with id " + parkDTO.getId());
+        logger.info("Update park with id " + park.getId());
         return parkRepository.save(park);
     }
 

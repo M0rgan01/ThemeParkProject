@@ -1,7 +1,7 @@
 package com.theme.park.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.theme.park.entities.Park;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +20,7 @@ public class CountryDTO {
     private String countryNameEn;
     private String countryNameFr;
     private String code;
-    private List<Park> parks;
+    @JsonIgnore
+    private List<ParkDTO> parks;
 
 }

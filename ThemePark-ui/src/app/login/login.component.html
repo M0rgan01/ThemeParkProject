@@ -10,8 +10,24 @@
         </div>
 
         <h5 class="card-title">Authentification</h5>
+
+
+        <div *ngIf="paramRedirect != null && paramRedirect === 'account-suspended'" class="alert alert-danger text-center">
+          <span>Compte suspendu</span>
+        </div>
+
+        <div *ngIf="paramRedirect != null && paramRedirect === 'expired-session'" class="alert alert-danger text-center">
+          <span>Session expiré</span>
+        </div>
+
+        <div *ngIf="paramRedirect != null && paramRedirect === 'auth-error'" class="alert alert-danger text-center">
+          <span>Une erreur à été détecté, veuillez procéder à une re-connection</span>
+        </div>
+
         <p class="card-text">Tu peux te connecter via ton compte Facebook ou Google. Uniquement le nom, l'adresse email et la photo de profil seront utiliser par le site.</p>
         <p class="card-text">Aucune publication de notre part sur Facebook.</p>
+
+
         <div class="text-center">
           <button class="btn btn-danger m-1 mr-xl-4 mr-0" (click)="signIn('google')">Connexion avec Google</button>
           <button class="btn btn-primary m-1 ml-xl-4 ml-0" (click)="signIn('facebook')">Connexion avec Facebook

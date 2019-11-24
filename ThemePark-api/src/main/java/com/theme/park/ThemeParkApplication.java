@@ -555,12 +555,14 @@ public class ThemeParkApplication implements CommandLineRunner {
 
         Park park = new Park();
         park.setName("Astérix");
+        park.setUrlName("asterix");
         park.setCountry(FR);
         parkRepository.save(park);
 
         Park park2 = new Park();
         park2.setCountry(FR);
         park2.setName("Disney");
+        park2.setUrlName("disney");
         parkRepository.save(park2);
 
         Park park3 = new Park();

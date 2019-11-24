@@ -1,12 +1,11 @@
 package com.theme.park.security.auth.jwt;
 
 
-import com.theme.park.security.token.JwtAuthenticationToken;
-import com.theme.park.security.token.JwtService;
-import com.theme.park.security.token.JwtToken;
+import com.theme.park.utilities.token.JwtAuthenticationToken;
+import com.theme.park.utilities.token.JwtService;
+import com.theme.park.utilities.token.JwtToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,6 +16,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,29 +33,31 @@ public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticati
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenAuthenticationProcessingFilter.class);
     private final AuthenticationFailureHandler failureHandler;
-    private final JwtService jwtService;
-    private String headerAuth;
+    private String accessTokenPrefix;
+    private JwtService jwtService;
 
-    @Autowired
-    public JwtTokenAuthenticationProcessingFilter(AuthenticationFailureHandler failureHandler, 
-    		JwtService jwtService, RequestMatcher matcher, String headerAuth) {
+    public JwtTokenAuthenticationProcessingFilter(AuthenticationFailureHandler failureHandler,
+                                                  RequestMatcher matcher,
+                                                  String accessTokenPrefix,
+                                                  JwtService jwtService) {
         super(matcher);
         this.failureHandler = failureHandler;
+        this.accessTokenPrefix = accessTokenPrefix;
         this.jwtService = jwtService;
-        this.headerAuth = headerAuth;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
 
+        // get token from a Cookie
+        Cookie[] cookies = request.getCookies();
+
+        Cookie sessionCookie = jwtService.findToken(cookies, accessTokenPrefix);
+
     	//on récupère le token
-        String tokenPayload = request.getHeader(headerAuth);
-         logger.debug("Getting token from payload for authentication");
-        // on enlève le préfixe et on créé un objet JwtToken
-        JwtToken token = new JwtToken(jwtService.extract(tokenPayload));
-              
-        return getAuthenticationManager().authenticate(new JwtAuthenticationToken(token));
+         logger.debug("Getting token");
+        return getAuthenticationManager().authenticate(new JwtAuthenticationToken(new JwtToken(sessionCookie.getValue())));
     }
 
     @Override

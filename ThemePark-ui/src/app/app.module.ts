@@ -9,7 +9,7 @@ import {environment} from '../environments/environment';
 import {APIService} from '../service/api.service';
 import {AppRoutingModule} from './app-routing.module';
 import {JwtModule, JwtModuleOptions} from '@auth0/angular-jwt';
-import {AuthGuardService} from '../service/auth-gard.service';
+import {AuthGuardService} from '../service/auth-guard.service';
 import {AuthenticationService} from '../service/authentification.service';
 import {ParkComponent} from './park/park.component';
 import {FourHoFourComponent} from './four-ho-four/four-ho-four.component';
@@ -21,6 +21,7 @@ import {HomeComponent} from './home/home.component';
 import {FormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {TokenInterceptor} from '../interceptor/http-interceptor';
+import {AdminGuardService} from '../service/admin-guard.service';
 
 const config = new AuthServiceConfig([
   {
@@ -69,7 +70,7 @@ export function tokenGetters() {
     NgbModule,
     JwtModule.forRoot(JWTModuleOptions)
   ],
-  providers: [APIService, AuthGuardService, AuthenticationService, {
+  providers: [APIService, AuthGuardService, AdminGuardService, AuthenticationService, {
     provide: AuthServiceConfig,
     useFactory: provideConfig
   },
