@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable, of} from 'rxjs';
-import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {APIService} from '../../service/api.service';
 import {Park} from '../../model/park.model';
 

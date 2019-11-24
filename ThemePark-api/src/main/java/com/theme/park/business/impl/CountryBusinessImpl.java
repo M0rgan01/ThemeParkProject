@@ -5,7 +5,6 @@ import com.theme.park.doa.CountryRepository;
 import com.theme.park.doa.specification.SearchCriteria;
 import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Country;
-import com.theme.park.entities.Park;
 import com.theme.park.exception.CriteriaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

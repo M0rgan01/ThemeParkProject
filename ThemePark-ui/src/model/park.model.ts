@@ -3,6 +3,7 @@ import {Country} from './country.model';
 export class Park {
   id: number;
   name: string;
+  urlName: string;
   globalNotation: number;
   country: Country;
   location: string;
@@ -12,4 +13,5 @@ export class Park {
   opening: string;
   dateCreation: Date;
   openingDate: Date;
+  comments: Array<Comment>;
 }

@@ -44,19 +44,19 @@
           Mon compte
         </a>
         <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-          <div *ngIf="authService.isAuth()">
+          <div *ngIf="isAuth">
             <a class="dropdown-item" routerLink="/account">Mon profil</a>
             <a (click)="authService.signOut()"
                class="dropdown-item cliquable">Se déconnecter
             </a>
           </div>
-          <div *ngIf="!authService.isAuth()">
+          <div *ngIf="!isAuth">
             <a class="dropdown-item" routerLink="/login">Authentification</a>
             <a class="dropdown-item" routerLink="/register">Inscription</a>
           </div>
         </div>
       </li>
-      <li *ngIf="authService.isAuth() && authService.isAdmin()" class="nav-item dropdown d-sm-block d-lg-none">
+      <li *ngIf="isAuth && isAdmin" class="nav-item dropdown d-sm-block d-lg-none">
         <a class="nav-link dropdown-toggle" href="#" id="smallerscreenmenu2" data-toggle="dropdown"
            aria-haspopup="true"
            aria-expanded="false">
@@ -79,21 +79,13 @@
           <input id="typeahead-http1" type="text" class="form-control" [class.is-invalid]="searchFailed"
                  [ngbTypeahead]="search"
                  [resultFormatter]="formatter" [inputFormatter]="formatter" [resultTemplate]="rt"
-                 placeholder="Recherche"/>
+                 placeholder="Recherche" name="park" [(ngModel)]="park" (keyup.enter)="submitSearch(park)"/>
         </div>
       </form>
       <!--FIN CONTENU PETIT ECRAN-->
 
     </ul>
   </div>
-
-
-  <ng-template #rt let-r="result" let-t="term">
-    <div class="d-flex" (click)="submitSearch(r)">
-      <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
-      <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px" [alt]="r.name">
-    </div>
-  </ng-template>
 
   <!--PARTIE DROITE-->
 
@@ -107,15 +99,15 @@
           <input id="typeahead-http2" type="text" class="form-control" [class.is-invalid]="searchFailed"
                  [ngbTypeahead]="search"
                  [resultFormatter]="formatter" [inputFormatter]="formatter" [resultTemplate]="rt"
-                 placeholder="Recherche"/>
+                 placeholder="Recherche" name="park" [(ngModel)]="park" (keyup.enter)="submitSearch(park)"/>
         </div>
       </form>
 
-      <li *ngIf="authService.isAuth()" ngbDropdown class="nav-item ml-3">
+      <li *ngIf="isAuth" ngbDropdown class="nav-item ml-3">
 
         <a class="nav-link dropdown-toggle p-0 text-white cliquable" ngbDropdownToggle id="accountDropDown">
-          <img [src]="authService.getPhotoURL()" alt="Profile picture" class="img-rounded mx-2">
-          <span class="align-middle">{{authService.getUserName()}}</span>
+          <img [src]="photoUrl" alt="Profile picture" class="img-rounded mx-2">
+          <span class="align-middle">{{userName}}</span>
         </a>
 
         <div ngbDropdownMenu aria-labelledby="accountDropDown" class="dropdown-menu ml-2 cliquable">
@@ -139,19 +131,19 @@
       <a routerLinkActive="font-weight-bold active-bg" routerLink="/home"
          class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-home mr-2"></i>Accueil</a>
 
-      <a *ngIf="!authService.isAuth()" routerLink="/login"
+      <a *ngIf="!isAuth" routerLink="/login"
          class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-lock mr-2"></i>Authentification</a>
 
       <!-- /END Separator -->
       <!-- Menu with submenu -->
-      <a *ngIf="authService.isAuth()" (click)="isCollapsedAdmin = !isCollapsedAdmin"
+      <a *ngIf="isAuth" (click)="isCollapsedAdmin = !isCollapsedAdmin"
          [attr.aria-expanded]="isCollapsedAdmin" aria-controls="collapse1"
          class="list-group-item list-group-item-action border-0 side-bar-bg cliquable">
         <i class="fas fa-tools mr-2"></i>Administration<i class="ml-2 fas" [ngClass]="!isCollapsedAdmin ? 'fa-caret-down' : 'fa-caret-up'" ></i>
       </a>
 
       <!-- Submenu content -->
-      <div *ngIf="authService.isAuth()" id="collapse1" [ngbCollapse]="!isCollapsedAdmin" class="collapse">
+      <div *ngIf="isAuth" id="collapse1" [ngbCollapse]="!isCollapsedAdmin" class="collapse">
         <a routerLink="/admin/park/create" class="list-group-item list-group-item-action text-white bg-dark">
           <i class="fas fa-plus-circle mx-2"></i>Ajouter un parc
         </a>
@@ -179,3 +171,9 @@
 </div>
 
 
+<ng-template #rt let-r="result" let-t="term">
+  <div (click)="submitSearch(r)">
+    <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+    <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px" [alt]="r.name">
+  </div>
+</ng-template>

@@ -1,12 +1,14 @@
 package com.theme.park.object;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.theme.park.entities.Role;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
 
 @Data
 @AllArgsConstructor
@@ -27,4 +29,5 @@ public class SocialUserDTO {
     private String firstName;
     private String lastName;
     private boolean active;
+    private Collection<Role> roles;
 }

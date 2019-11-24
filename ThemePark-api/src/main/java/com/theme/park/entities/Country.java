@@ -1,6 +1,5 @@
 package com.theme.park.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +23,6 @@ public class Country {
     private String countryNameEn;
     private String countryNameFr;
     private String code;
-    @JsonIgnore
     @OneToMany(mappedBy = "country")
     private List<Park> parks;
 }

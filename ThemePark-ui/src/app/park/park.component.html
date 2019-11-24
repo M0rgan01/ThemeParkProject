@@ -1,1 +1,52 @@
+<div *ngIf="park" class="row">
+  <div class="col-12">
+    <h5>{{park.name}}</h5>
+  </div>
+  <div class="col-12">
+    <p>{{park.country.countryNameEn}}</p>
+  </div>
+  <div class="col-12">
+    <ngb-rating [(rate)]="currentRate" [starTemplate]="t" style="outline: none" [readonly]="true"
+                max="5"></ngb-rating>
+  </div>
 
+</div>
+
+<!--//////////////////////////////// COMMENTS ////////////////////////////////////////-->
+
+<div class="row">
+  <form #f=ngForm (ngSubmit)="onSubmitComment()" class="col">
+    <h5>Commentaire</h5>
+    <div class="form-group">
+      <label for="textarea1">Laisser un commentaire :</label>
+      <textarea name="content" maxlength="500" [(ngModel)]="comment.content" required class="form-control"
+                id="textarea1" rows="3"></textarea>
+      <div *ngIf="comment.content" class="form-text small">
+        <p>Nombre de caractères restant: {{500 - comment.content.length}}</p>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="my-0" for="rating1">Laisser une note (facultatif) :</label>
+      <div class="row">
+        <div class="col">
+          <ngb-rating class="" id="rating1" style="font-size: 1.5em; outline: none" [(rate)]="comment.notation"
+                      max="5"></ngb-rating>
+          <i *ngIf="comment.notation !== 0" (click)="resetRating()" style="font-size: 1.2em;"
+             class="cliquable fas fa-times ml-2"></i>
+        </div>
+      </div>
+      <div class="form-text my-0 small">
+        <div *ngIf="comment.notation !== 0" class="text-success">Votre note: {{comment.notation}}/5</div>
+      </div>
+    </div>
+    <button [disabled]="f.invalid" type="submit" class="btn btn-success">Ajouter</button>
+  </form>
+</div>
+
+<!--/////////////////////////////////// TEMPLATE ///////////////////////////////////-->
+
+<ng-template #t let-fill="fill">
+  <span class="star" [class.full]="fill === 100">
+    <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+  </span>
+</ng-template>

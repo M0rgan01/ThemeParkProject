@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,11 @@ import javax.validation.Valid;
 public class CommentController {
 
     private CommentBusiness commentBusiness;
+    private ModelMapper modelMapper;
 
-    public CommentController(CommentBusiness commentBusiness) {
+    public CommentController(CommentBusiness commentBusiness, ModelMapper modelMapper) {
         this.commentBusiness = commentBusiness;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(value = "Création d'un commentaire")
@@ -30,12 +33,11 @@ public class CommentController {
             @ApiResponse(code = 404, message = "Aucune correspondance du parc"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @PostMapping(value = "/adminRole/comment")
+    @PostMapping(value = "/userRole/comment")
     public ResponseEntity<?> createComment(@RequestBody @Valid CommentDTO commentDTO) throws NotFoundException {
 
-        Comment comment = commentBusiness.createComment(commentDTO);
-
-        return ResponseEntity.ok().body(comment);
+        Comment comment = commentBusiness.createComment(modelMapper.map(commentDTO, Comment.class));
+        return ResponseEntity.ok().body(modelMapper.map(comment, CommentDTO.class));
     }
 
     @ApiOperation(value = "Modification d'un commentaire")
@@ -47,9 +49,9 @@ public class CommentController {
     @PutMapping(value = "/adminRole/comment/{id}")
     public ResponseEntity<?> updateComment(@PathVariable Long id, @RequestBody @Valid CommentDTO commentDTO) throws NotFoundException {
 
-        Comment comment = commentBusiness.updateComment(id, commentDTO);
+        Comment comment = commentBusiness.updateComment(id, modelMapper.map(commentDTO, Comment.class));
 
-        return ResponseEntity.ok().body(comment);
+        return ResponseEntity.ok().body(modelMapper.map(comment, CommentDTO.class));
     }
 
 }

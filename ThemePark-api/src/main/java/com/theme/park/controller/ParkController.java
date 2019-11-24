@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,24 +28,26 @@ public class ParkController {
 
     private ParkBusiness parkBusiness;
     private ObjectMapper objectMapper;
+    private ModelMapper modelMapper;
 
-    public ParkController(ParkBusiness parkBusiness, ObjectMapper objectMapper) {
+    public ParkController(ParkBusiness parkBusiness, ObjectMapper objectMapper, ModelMapper modelMapper) {
         this.parkBusiness = parkBusiness;
         this.objectMapper = objectMapper;
+        this.modelMapper = modelMapper;
     }
 
-    @ApiOperation(value = "Récupère un Park selon son ID")
+    @ApiOperation(value = "Récupère un Park selon son urlName")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Succès de la récupération"),
             @ApiResponse(code = 404, message = "Aucune correspondance"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @GetMapping(value = "/public/parkById/{id}")
-    public ResponseEntity<?> getParkById(@PathVariable Long id) throws NotFoundException {
+    @GetMapping(value = "/public/park/{urlName}")
+    public ResponseEntity<?> getParkById(@PathVariable String urlName) throws NotFoundException {
 
-        Park park = parkBusiness.findById(id);
+        Park park = parkBusiness.findByUrlName(urlName);
 
-        return ResponseEntity.ok().body(park);
+        return ResponseEntity.ok().body(modelMapper.map(park, ParkDTO.class));
     }
 
 
@@ -60,8 +63,9 @@ public class ParkController {
     List<SearchCriteria> searchCriteriaList = SearchCriteria.convertBase64Url(values, objectMapper);
 
     Page<Park> parks = parkBusiness.searchParks(searchCriteriaList, page, size);
+    Page<ParkDTO> parkDTOS = parks.map(park -> modelMapper.map(park, ParkDTO.class));
 
-        return ResponseEntity.ok().body(parks);
+        return ResponseEntity.ok().body(parkDTOS);
     }
 
 
@@ -74,9 +78,9 @@ public class ParkController {
     @PostMapping(value = "/userRole/park")
     public ResponseEntity<?> createPark(@RequestBody @Valid ParkDTO parkDTO) throws AlreadyExistException {
 
-        Park park = parkBusiness.createPark(parkDTO);
+        Park park = parkBusiness.createPark(modelMapper.map(parkDTO, Park.class));
 
-        return ResponseEntity.ok().body(park);
+        return ResponseEntity.ok().body(modelMapper.map(park, ParkDTO.class));
     }
 
     @ApiOperation(value = "Modification de park")
@@ -89,8 +93,9 @@ public class ParkController {
     @PutMapping(value = "/userRole/park/{id}")
     public ResponseEntity<?> updatePark(@PathVariable Long id ,@RequestBody @Valid ParkDTO parkDTO) throws AlreadyExistException, NotFoundException {
 
-        Park park = parkBusiness.updatePark(id, parkDTO);
+        Park park = parkBusiness.updatePark(id, modelMapper.map(parkDTO, Park.class));
 
-        return ResponseEntity.ok().body(park);
+        return ResponseEntity.ok().body(modelMapper.map(park, ParkDTO.class));
     }
+
 }

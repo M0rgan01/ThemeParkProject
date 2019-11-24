@@ -8,14 +8,14 @@ import org.springframework.security.core.AuthenticationException;
  *
  * 20 Juillet 2019
  */
-public class JwtExpiredTokenException extends AuthenticationException {
+public class JwtExpiredException extends AuthenticationException {
 
 
-    public JwtExpiredTokenException(String msg) {
+    public JwtExpiredException(String msg) {
         super(msg);
     }
 
-    public JwtExpiredTokenException(String msg, Throwable t) {
+    public JwtExpiredException(String msg, Throwable t) {
         super(msg, t);
     
     }

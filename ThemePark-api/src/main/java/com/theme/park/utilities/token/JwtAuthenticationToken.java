@@ -1,4 +1,4 @@
-package com.theme.park.security.token;
+package com.theme.park.utilities.token;
 
 
 import com.theme.park.entities.SocialUser;

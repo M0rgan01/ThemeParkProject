@@ -1,14 +1,15 @@
 package com.theme.park.controller.handler;
 
-import com.theme.park.exception.AlreadyExistException;
-import com.theme.park.exception.CriteriaException;
-import com.theme.park.exception.NotFoundException;
-import com.theme.park.security.response.ErrorResponse;
+import com.theme.park.exception.*;
+import com.theme.park.utilities.response.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,8 +39,17 @@ public class HandleException {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponse handleException(Exception ex) {
+        ex.printStackTrace();
         logger.error("Internal error : " + ex.getMessage());
         return ErrorResponse.of("internal.error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // DB out of service
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ResponseBody
+    public ErrorResponse handleException(DataAccessResourceFailureException ex) {
+        return ErrorResponse.of("database.connection.error", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     //////////////////////////// JSON ERROR /////////////////////////////
@@ -54,7 +64,7 @@ public class HandleException {
     //////////////////////////// VALIDATION ERROR /////////////////////////////
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ResponseBody
     public ErrorResponse handleException(MethodArgumentNotValidException ex) {
 
@@ -68,24 +78,43 @@ public class HandleException {
             errorDetails.add(error);
         }
 
-        return ErrorResponse.of(errorDetails, HttpStatus.CONFLICT);
+        return ErrorResponse.of(errorDetails, HttpStatus.NOT_ACCEPTABLE);
     }
 
     //////////////////////////// AUTHENTICATION ERROR /////////////////////////////
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    // compte utilisateur suspendu
+    @ExceptionHandler(DisabledException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public ErrorResponse handleException(IllegalArgumentException ex) {
-        return ErrorResponse.of(ex.getMessage(), HttpStatus.CONFLICT);
+    public ErrorResponse handleException(DisabledException ex) {
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    // JWT expiré
+    @ExceptionHandler(JwtExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public ErrorResponse handleException(AuthenticationException ex) {
-        return ErrorResponse.of(ex.getMessage(), HttpStatus.CONFLICT);
+    public ErrorResponse handleException(JwtExpiredException ex) {
+        return ErrorResponse.of("jwt.refresh.expired", HttpStatus.UNAUTHORIZED);
     }
+
+    // JWT invalid
+    @ExceptionHandler(JwtInvalidException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleException(JwtInvalidException ex) {
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    // user not found
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleException(AuthenticationCredentialsNotFoundException ex) {
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
 
     //////////////////////////// BUSINESS ERROR /////////////////////////////
 
@@ -97,16 +126,16 @@ public class HandleException {
     }
 
     @ExceptionHandler(AlreadyExistException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ResponseBody
     public ErrorResponse handleException(AlreadyExistException ex) {
-        return ErrorResponse.of(ex.getMessage(), HttpStatus.CONFLICT);
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(CriteriaException.class)
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public ErrorResponse handleException(CriteriaException ex) {
-        return ErrorResponse.of(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.CONFLICT);
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SocialUser {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long socialUserId;
     private String id;
     private String provider;

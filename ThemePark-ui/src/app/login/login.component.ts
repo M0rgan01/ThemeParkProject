@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
 import {APIService} from '../../service/api.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationService} from '../../service/authentification.service';
+import {CustomSocialUser} from '../../model/custom-social-user.model';
 
 @Component({
   selector: 'app-login',
@@ -11,15 +12,20 @@ import {AuthenticationService} from '../../service/authentification.service';
 })
 
 export class LoginComponent implements OnInit {
-  public error: string = null;
+  private paramRedirect;
 
   constructor(private socialAuthService: AuthService,
               private authService: AuthenticationService,
               private api: APIService,
-              private router: Router) {
+              private router: Router,
+              private activeRoute: ActivatedRoute) {
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+      this.activeRoute.queryParamMap.subscribe(params => {
+       this.paramRedirect = params.get('redirect');
+      });
+  }
 
 
   signIn(provider: string) {
@@ -41,19 +47,13 @@ export class LoginComponent implements OnInit {
 
     // si on est déja connecté, alors on logout
     if (this.authService.isAuth()) {
-      this.authService.removeToken();
+      this.authService.removeUserAndCookies();
     }
 
-    this.api.login(user).subscribe(resp => {
-      // nous définisson un object jwt qui aura pour valeur l'en-tete Authorization
-      const jwtAuth = resp.headers.get('Authorization');
-      const jwtRefresh = resp.headers.get('refresh');
-      // on enregistrons le jwt dans le localStorage d'angular
-      this.authService.saveTokens(jwtAuth, jwtRefresh);
+    this.api.postRessources<CustomSocialUser>('/auth/login', user).subscribe(resp => {
+      this.authService.saveUser(resp);
       this.router.navigateByUrl('/');
       console.log('success');
-    }, err => {
-      this.error = err.error.error;
     });
   }
 

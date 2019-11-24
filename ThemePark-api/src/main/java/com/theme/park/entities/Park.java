@@ -17,6 +17,7 @@ public class Park {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String urlName;
     private float globalNotation;
     private String location;
     private String gps;

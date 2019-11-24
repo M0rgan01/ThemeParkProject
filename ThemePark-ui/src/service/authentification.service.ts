@@ -2,87 +2,73 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {Router} from '@angular/router';
+import {CustomSocialUser} from '../model/custom-social-user.model';
+import {APIService} from './api.service';
 
 @Injectable()
 export class AuthenticationService {
 
-  private jwtTokenAuth: string;
-  private jwtTokenRefresh: string;
+  private user: CustomSocialUser;
   private roles: Array<any>;
 
   constructor(private http: HttpClient,
               private jwtHelper: JwtHelperService,
-              private router: Router) {
+              private router: Router,
+              private api: APIService) {
   }
 
 
   ///////////////////////// GESTION DES TOKENS ////////////////////
 
-  removeToken() {
-    this.jwtTokenAuth = null;
-    this.jwtTokenRefresh = null;
-    localStorage.removeItem('tokenAuth');
-    localStorage.removeItem('tokenRefresh');
-  }
-
-  // sauvegarde du token dans le local storage
-  saveTokens(jwtAuth: string, jwtRefresh: string) {
-    localStorage.setItem('tokenAuth', jwtAuth);
-    localStorage.setItem('tokenRefresh', jwtRefresh);
-  }
-
-  saveAuthToken(jwtAuth: string) {
-    localStorage.setItem('tokenAuth', jwtAuth);
+  saveUser(user: CustomSocialUser) {
+    localStorage.setItem('userInfo', JSON.stringify(user));
   }
 
   // chargement du token d'auth
-  loadTokenAuth() {
-    this.jwtTokenAuth = localStorage.getItem('tokenAuth');
-  }
-
-  // chargement du token de refresh
-  loadTokenRefresh() {
-    this.jwtTokenRefresh = localStorage.getItem('tokenRefresh');
-  }
-
-  getTokenAuth() {
-    if (this.jwtTokenAuth == null) {
-      this.loadTokenAuth();
-    }
-    return this.jwtTokenAuth;
-  }
-
-  getTokenRefresh() {
-    if (this.jwtTokenRefresh == null) {
-      this.loadTokenRefresh();
-    }
-    return this.jwtTokenRefresh;
+  loadUser() {
+    this.user = JSON.parse(localStorage.getItem('userInfo'));
   }
 
   ///////////////////////// GESTION DES PAYLOAD ////////////////////
 
   // chargement du pseudo stoké dans le token
   getUserName() {
-    if (this.jwtTokenAuth == null) {
-      this.loadTokenAuth();
+    if (this.user == null) {
+      this.loadUser();
     }
-    return this.jwtHelper.decodeToken(this.jwtTokenAuth).sub;
+    return this.user.name;
+  }
+
+  // chargement du pseudo stoké dans le token
+  getEmail() {
+    if (this.user == null) {
+      this.loadUser();
+    }
+    return this.user.email;
+  }
+
+  // chargement du provider stoké dans le token
+  getProvider() {
+    if (this.user == null) {
+      this.loadUser();
+    }
+    return this.user.provider;
   }
 
   // chargement du pseudo stoké dans le token
   getPhotoURL() {
-    if (this.jwtTokenAuth == null) {
-      this.loadTokenAuth();
+    if (this.user == null) {
+      this.loadUser();
     }
-    return this.jwtHelper.decodeToken(this.jwtTokenAuth).photo;
+    return this.user.photoUrl;
   }
 
   // chargement des roles stockés dans le token
   loadRoles() {
-    if (this.jwtTokenAuth == null) {
-      this.loadTokenAuth();
+    if (this.user == null) {
+      this.loadUser();
     }
-    this.roles = this.jwtHelper.decodeToken(this.jwtTokenAuth).roles;
+    this.roles = this.user.roles;
   }
 
 
@@ -91,9 +77,8 @@ export class AuthenticationService {
 
   // verification de connection d'un utilisateur
   isAuth() {
-    // this.chechTokenRefresh();
-    this.loadTokenAuth();
-    return this.jwtTokenAuth;
+    this.loadUser();
+    return this.user;
   }
 
   // vérification du role ADMIN
@@ -107,11 +92,24 @@ export class AuthenticationService {
     return false;
   }
 
-//////////// LOGOUT /////////////////
+  //////////// LOGOUT /////////////////
+
+  removeUserAndCookies() {
+    this.api.getRessources('/auth/logout').subscribe(value => {
+      this.user = null;
+      localStorage.removeItem('userInfo');
+    });
+  }
 
   signOut(): void {
-    this.removeToken();
+    this.removeUserAndCookies();
     this.router.navigateByUrl('/login');
+  }
+
+  redirectToLogin(reason: string) {
+    console.log('redirect for error');
+    this.removeUserAndCookies();
+    this.router.navigateByUrl('/login?redirect=' + reason);
   }
 }
 
