@@ -22,6 +22,7 @@ import {FormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {TokenInterceptor} from '../interceptor/http-interceptor';
 import {AdminGuardService} from '../service/admin-guard.service';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
 const config = new AuthServiceConfig([
   {
@@ -68,6 +69,7 @@ export function tokenGetters() {
     HttpClientModule,
     AppRoutingModule,
     NgbModule,
+    InfiniteScrollModule,
     JwtModule.forRoot(JWTModuleOptions)
   ],
   providers: [APIService, AuthGuardService, AdminGuardService, AuthenticationService, {

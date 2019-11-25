@@ -1,6 +1,6 @@
 <div *ngIf="park" class="row">
   <div class="col-12">
-    <h5>{{park.name}}</h5>
+    <h1>{{park.name}}</h1>
   </div>
   <div class="col-12">
     <p>{{park.country.countryNameEn}}</p>
@@ -16,7 +16,7 @@
 
 <div class="row">
   <form #f=ngForm (ngSubmit)="onSubmitComment()" class="col">
-    <h5>Commentaire</h5>
+    <h2>Laissez un avis</h2>
     <div class="form-group">
       <label for="textarea1">Laisser un commentaire :</label>
       <textarea name="content" maxlength="500" [(ngModel)]="comment.content" required class="form-control"
@@ -42,6 +42,32 @@
     <button [disabled]="f.invalid" type="submit" class="btn btn-success">Ajouter</button>
   </form>
 </div>
+
+<div *ngIf="comments"
+     infiniteScroll
+     [infiniteScrollDisabled]="infiniteScrollDisable"
+     [infiniteScrollDistance]="0"
+     [infiniteScrollThrottle]="50"
+     (scrolled)="loadComments(this.page + 1, this.size)">
+
+  <div class="row">
+    <div class="col my-3">
+      <h2>Commentaires <span class="badge badge-primary">{{comments.totalElements}}</span></h2>
+    </div>
+  </div>
+
+  <div *ngFor="let i of comments.content" class="row">
+    <div>
+      <div class="col-12 my-3">
+        <img [src]="i.socialUser.photoUrl" alt="user" class="img-rounded">
+        <h3 class="d-inline">{{i.socialUser.name}}</h3>
+        <span>{{i.date}}</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 <!--/////////////////////////////////// TEMPLATE ///////////////////////////////////-->
 

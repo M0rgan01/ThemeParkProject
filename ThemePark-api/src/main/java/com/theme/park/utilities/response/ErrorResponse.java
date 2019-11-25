@@ -1,4 +1,4 @@
-package com.theme.park.security.response;
+package com.theme.park.utilities.response;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

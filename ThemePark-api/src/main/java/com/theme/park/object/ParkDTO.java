@@ -67,6 +67,4 @@ public class ParkDTO {
     @ApiModelProperty(notes = "Date de création du parc")
     private Date openingDate;
 
-    @ApiModelProperty(notes = "List de commentaires du park", readOnly = true)
-    private List<CommentDTO> comments;
 }

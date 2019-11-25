@@ -74,7 +74,7 @@ export class EditParkComponent implements OnInit, OnDestroy {
 
   onSubmitCreatePark() {
     this.setNullErrorAndSuccess();
-    this.api.postRessources<Park>('/userRole/park', this.park).subscribe(data => {
+    this.api.postRessources<Park>('/adminRole/park', this.park).subscribe(data => {
       this.success = 'Création réussie !';
     }, error1 => {
       if (error1.error.error) {

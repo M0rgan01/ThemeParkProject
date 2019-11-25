@@ -38,7 +38,7 @@ public class ThemeParkApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        List<Country> countryList = new ArrayList<>();
+       /* List<Country> countryList = new ArrayList<>();
 
         Role role = new Role();
         role.setName("USER");
@@ -574,6 +574,6 @@ public class ThemeParkApplication implements CommandLineRunner {
         park4.setCountry(US);
         park4.setName("Europa Park2");
         parkRepository.save(park4);
-
+*/
     }
 }

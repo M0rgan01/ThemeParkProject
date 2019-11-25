@@ -1,18 +1,13 @@
 package com.theme.park.object;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 @Data
@@ -38,17 +33,12 @@ public class CommentDTO {
     @Max(value = 5, message = "comment.notation.max.value.not.correct")
     private int notation;
 
+    @ApiModelProperty(notes = "Utilisateur du commentaire")
+    @NotNull(message = "comment.user.null")
     private SocialUserDTO socialUser;
 
+    @ApiModelProperty(notes = "Park du commentaire")
+    @NotNull(message = "comment.park.null")
     private ParkDTO park;
 
-    @JsonIgnore
-    public ParkDTO getPark() {
-        return park;
-    }
-
-    @JsonProperty
-    public void setPark(ParkDTO park) {
-        this.park = park;
-    }
 }
