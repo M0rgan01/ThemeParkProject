@@ -8,4 +8,7 @@ html, body {
   cursor: pointer;
 }
 
-
+.img-rounded{
+  border-radius: 50%;
+  height: 40px;
+}

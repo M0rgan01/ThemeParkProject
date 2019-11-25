@@ -32,7 +32,6 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
     private SocialUserBusiness socialUserBusiness;
     private static final Logger logger = LoggerFactory.getLogger(LoginAuthenticationProvider.class);
 
-    @Autowired
     public LoginAuthenticationProvider(SocialUserBusiness socialUserBusiness, ModelMapper modelMapper) {
         this.socialUserBusiness = socialUserBusiness;
         this.modelMapper = modelMapper;

@@ -5,6 +5,8 @@ import {Park} from '../../model/park.model';
 import {Comment} from '../../model/comment.model';
 import {AuthenticationService} from '../../service/authentification.service';
 import {SocialUser} from 'angularx-social-login';
+import {Page} from '../../model/page.model';
+import {SearchCriteria} from '../../model/search-criteria.model';
 
 @Component({
   selector: 'app-park',
@@ -14,24 +16,31 @@ import {SocialUser} from 'angularx-social-login';
 export class ParkComponent implements OnInit {
 
   private comment: Comment;
+  private comments: Page<Comment>;
   private park: Park;
   currentRate = 5;
 
-  constructor( private activatedRoute: ActivatedRoute,
-               private router: Router,
-               private api: APIService,
-               private authService: AuthenticationService) { }
+  private page = 0;
+  private size = 10;
+  private infiniteScrollDisable;
+
+  constructor(private activatedRoute: ActivatedRoute,
+              private router: Router,
+              private api: APIService,
+              private authService: AuthenticationService) {
+  }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(value => {
       this.api.getRessources<Park>('/public/park/' + value.get('name')).subscribe(value1 => {
         this.park = value1;
-        console.log(this.park);
+        this.comments = undefined;
+        this.infiniteScrollDisable = false;
+        this.loadComments(this.page, this.size);
       });
     });
     this.comment = new Comment();
     this.comment.notation = 0;
-    /*infinite scroll*/
   }
 
   onSubmitComment() {
@@ -48,4 +57,29 @@ export class ParkComponent implements OnInit {
   resetRating() {
     this.comment.notation = 0;
   }
+
+  loadComments(page: number, size: number) {
+
+    const listSearchCriteria = new Array<SearchCriteria>();
+    const searchCriteria = new SearchCriteria('park.id', ':', this.park.id);
+    listSearchCriteria.push(searchCriteria);
+
+    this.api.getRessources<Page<Comment>>('/public/comments/' + page + '/' + size + '?values=' +
+      btoa(JSON.stringify(listSearchCriteria))).subscribe(value => {
+
+      if (!this.comments) {
+        this.comments = value;
+      } else {
+        value.content.forEach(comment => {
+          this.comments.content.push(comment);
+        });
+      }
+
+      if (value.numberOfElements < this.size) {
+        this.infiniteScrollDisable = true;
+      }
+
+    });
+  }
+
 }

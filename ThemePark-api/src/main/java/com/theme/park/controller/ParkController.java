@@ -75,7 +75,7 @@ public class ParkController {
             @ApiResponse(code = 409, message = "Nom du parc déjà présent en persistance"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @PostMapping(value = "/userRole/park")
+    @PostMapping(value = "/adminRole/park")
     public ResponseEntity<?> createPark(@RequestBody @Valid ParkDTO parkDTO) throws AlreadyExistException {
 
         Park park = parkBusiness.createPark(modelMapper.map(parkDTO, Park.class));

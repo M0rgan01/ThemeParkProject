@@ -80,6 +80,7 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(contact, null);
         //processus d'authentification
+
         return this.getAuthenticationManager().authenticate(token);
     }
 

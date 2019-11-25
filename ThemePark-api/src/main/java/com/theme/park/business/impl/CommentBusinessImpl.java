@@ -4,14 +4,22 @@ import com.theme.park.business.CommentBusiness;
 import com.theme.park.business.ParkBusiness;
 import com.theme.park.business.SocialUserBusiness;
 import com.theme.park.doa.CommentRepository;
+import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Comment;
+import com.theme.park.exception.CriteriaException;
 import com.theme.park.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -28,6 +36,18 @@ public class CommentBusinessImpl implements CommentBusiness {
         this.commentRepository = commentRepository;
         this.parkBusiness = parkBusiness;
         this.socialUserBusiness = socialUserBusiness;
+    }
+
+    @Override
+    public Page<Comment> searchComments(List<SearchCriteria> searchCriteria, int page, int size) throws CriteriaException {
+        if (searchCriteria == null)
+            searchCriteria = new ArrayList<>();
+
+        SpecificationBuilder builder = new SpecificationBuilder<Comment>(searchCriteria);
+        Specification<Comment> spec = builder.build();
+
+        logger.debug("searching comment with " + searchCriteria.size() + " criteria list size for page " + page + " with size " + size);
+        return commentRepository.findAll(spec, PageRequest.of(page, size));
     }
 
     @Override
