@@ -41,3 +41,7 @@
 .active-bg{
   background: dodgerblue;
 }
+
+.sticky-offset{
+  padding-top: 85px;
+}

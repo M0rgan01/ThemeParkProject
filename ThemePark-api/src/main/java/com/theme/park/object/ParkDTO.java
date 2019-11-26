@@ -32,7 +32,7 @@ public class ParkDTO {
     @ApiModelProperty(notes = "Notation global du parc", example = "3.6", readOnly = true)
     @Min(value = 0, message = "park.notation.min.value.not.correct")
     @Max(value = 5, message = "park.notation.max.value.not.correct")
-    private double globalNotation;
+    private float globalNotation;
 
     @ApiModelProperty(notes = "Pays du parc", example = "France", required = true)
     @NotNull(message = "park.country.null")

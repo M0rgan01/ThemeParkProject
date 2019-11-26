@@ -5,24 +5,44 @@
   <div class="col-12">
     <p>{{park.country.countryNameEn}}</p>
   </div>
-  <div class="col-12">
-    <ngb-rating [(rate)]="currentRate" [starTemplate]="t" style="outline: none" [readonly]="true"
-                max="5"></ngb-rating>
+  <div *ngIf="park.globalNotation" class="col-12">
+    <ngb-rating [(rate)]="park.globalNotation" [starTemplate]="t" style="outline: none" [readonly]="true"
+                max="5" placement="top" [ngbTooltip]="park.globalNotation"></ngb-rating>
   </div>
+
+  <div class="offset-2 col-8">
+    <ngb-carousel style="outline: none">
+      <ng-template ngbSlide>
+        <div>
+          <img class="img-fluid rounded" src="https://www.okayama-japan.jp/cms/wp-content/uploads/2015/11/01.kourakuen5-900x600.jpg" alt="">
+        </div>
+      </ng-template>
+       <ng-template ngbSlide>
+         <img class="img-fluid rounded" src="https://www.drinks-insight-network.com/wp-content/uploads/sites/23/2019/03/deals_1-900x600.jpg" alt="">
+       </ng-template>
+      <ng-template ngbSlide>
+        <img class="img-fluid rounded" src="https://yard.media/wp-content/uploads/2015/09/burningmanMatthieuVautrin2-900x600.jpg" alt="">
+      </ng-template>
+    </ngb-carousel>
+  </div>
+
 
 </div>
 
-<!--//////////////////////////////// COMMENTS ////////////////////////////////////////-->
+<!--//////////////////////////////// ADD COMMENTS ////////////////////////////////////////-->
 
-<div class="row">
+<button *ngIf="authService.isAuth()" class="btn btn-primary" (click)="isCollapsedComment = !isCollapsedComment" aria-controls="commentForm">Laissez
+  un avis
+</button>
+
+<div *ngIf="authService.isAuth()" class="row" [ngbCollapse]="!isCollapsedComment" id="commentForm">
   <form #f=ngForm (ngSubmit)="onSubmitComment()" class="col">
-    <h2>Laissez un avis</h2>
     <div class="form-group">
       <label for="textarea1">Laisser un commentaire :</label>
       <textarea name="content" maxlength="500" [(ngModel)]="comment.content" required class="form-control"
                 id="textarea1" rows="3"></textarea>
       <div *ngIf="comment.content" class="form-text small">
-        <p>Nombre de caractères restant: {{500 - comment.content.length}}</p>
+        <p>Nombre de caractères restant: {{1000 - comment.content.length}}</p>
       </div>
     </div>
     <div class="form-group">
@@ -31,8 +51,9 @@
         <div class="col">
           <ngb-rating class="" id="rating1" style="font-size: 1.5em; outline: none" [(rate)]="comment.notation"
                       max="5"></ngb-rating>
-          <i *ngIf="comment.notation !== 0" (click)="resetRating()" style="font-size: 1.2em;"
-             class="cliquable fas fa-times ml-2"></i>
+          <button *ngIf="comment.notation !== 0" (click)="resetRating()" type="button" class="close ml-2">
+            <span>&times;</span>
+          </button>
         </div>
       </div>
       <div class="form-text my-0 small">
@@ -43,12 +64,14 @@
   </form>
 </div>
 
+<!--/////////////////////////////////// COMMENTS ///////////////////////////////////-->
+
 <div *ngIf="comments"
      infiniteScroll
      [infiniteScrollDisabled]="infiniteScrollDisable"
      [infiniteScrollDistance]="0"
      [infiniteScrollThrottle]="50"
-     (scrolled)="loadComments(this.page + 1, this.size)">
+     (scrolled)="loadComments(this.page, this.size)">
 
   <div class="row">
     <div class="col my-3">
@@ -57,14 +80,20 @@
   </div>
 
   <div *ngFor="let i of comments.content" class="row">
-    <div>
-      <div class="col-12 my-3">
+    <div class="col-lg-12 mt-4 mb-2">
+      <div class="text-center d-lg-inline">
         <img [src]="i.socialUser.photoUrl" alt="user" class="img-rounded">
-        <h3 class="d-inline">{{i.socialUser.name}}</h3>
-        <span>{{i.date}}</span>
       </div>
+      <span class="d-lg-inline d-block mx-lg-2 mx-0 font-weight-bold text-center">{{i.socialUser.name}}</span>
+      <div *ngIf="i.notation" class="d-lg-inline d-block mx-lg-2 mx-0 text-center">
+        <ngb-rating class="" id="rating2" style="font-size: 1.2em; outline: none" [rate]="i.notation"
+                    max="5" [readonly]="true"></ngb-rating>
+      </div>
+      <span class="text-muted text-center d-lg-inline d-block">{{i.date | dateAgo}}</span>
     </div>
-
+    <div class="col-12">
+      <p class="text-center text-lg-left">{{i.content}}</p>
+    </div>
   </div>
 </div>
 
