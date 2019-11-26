@@ -57,7 +57,8 @@ public class CommentBusinessImpl implements CommentBusiness {
         comment.setDate(new Date());
         comment = commentRepository.save(comment);
         logger.info("Create comment with id " + comment.getId());
-        parkBusiness.updateNotation(comment.getPark().getId());
+        if (comment.getNotation() != 0)
+            parkBusiness.updateNotation(comment.getPark().getId());
         return comment;
     }
 

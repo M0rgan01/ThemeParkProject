@@ -121,12 +121,12 @@
 
 
 <!-- SIDEBAR https://www.codeply.com/go/7XYosZ7VH5 -->
-<div *ngIf="!isHide" class="row h-100 m-0 pt-5" id="body-row">
+<div *ngIf="!isHide" class="row h-100 m-0" id="body-row">
   <!-- Sidebar -->
   <div class="d-none d-lg-block col-xl-2 col-lg-3 p-0 border-right side-bar-bg"
        [ngClass]="{'d-lg-block': isToggledSideBar, 'd-lg-none': !isToggledSideBar}">
 
-    <div class="list-group sticky-offset sticky-top list-group-flush pt-5">
+    <div class="list-group sticky-offset sticky-top list-group-flush">
 
       <a routerLinkActive="font-weight-bold active-bg" routerLink="/home"
          class="list-group-item list-group-item-action border-0 side-bar-bg"><i class="fas fa-home mr-2"></i>Accueil</a>
@@ -162,7 +162,7 @@
 
   <div class="col">
     <div class="container">
-      <div class="mb-5"></div>
+      <div class="mb-5 pt-5"></div>
       <router-outlet>
       </router-outlet>
     </div>

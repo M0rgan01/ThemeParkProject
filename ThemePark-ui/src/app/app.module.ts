@@ -23,6 +23,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {TokenInterceptor} from '../interceptor/http-interceptor';
 import {AdminGuardService} from '../service/admin-guard.service';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import { DateAgoPipe } from '../pipe/date-ago.pipe';
 
 const config = new AuthServiceConfig([
   {
@@ -60,7 +61,8 @@ export function tokenGetters() {
     AccountComponent,
     AboutComponent,
     EditParkComponent,
-    HomeComponent
+    HomeComponent,
+    DateAgoPipe
   ],
   imports: [
     BrowserModule,

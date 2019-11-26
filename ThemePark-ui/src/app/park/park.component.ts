@@ -18,11 +18,11 @@ export class ParkComponent implements OnInit {
   private comment: Comment;
   private comments: Page<Comment>;
   private park: Park;
-  currentRate = 5;
 
   private page = 0;
   private size = 10;
   private infiniteScrollDisable;
+  private isCollapsedComment = false;
 
   constructor(private activatedRoute: ActivatedRoute,
               private router: Router,
@@ -34,8 +34,7 @@ export class ParkComponent implements OnInit {
     this.activatedRoute.paramMap.subscribe(value => {
       this.api.getRessources<Park>('/public/park/' + value.get('name')).subscribe(value1 => {
         this.park = value1;
-        this.comments = undefined;
-        this.infiniteScrollDisable = false;
+        this.resetContext();
         this.loadComments(this.page, this.size);
       });
     });
@@ -51,6 +50,8 @@ export class ParkComponent implements OnInit {
     this.api.postRessources<Comment>('/userRole/comment', this.comment).subscribe(value => {
       this.comment = new Comment();
       this.comment.notation = 0;
+      this.resetContext();
+      this.loadComments(this.page, this.size);
     });
   }
 
@@ -79,7 +80,15 @@ export class ParkComponent implements OnInit {
         this.infiniteScrollDisable = true;
       }
 
+      this.page++;
     });
+  }
+
+  resetContext() {
+    window.scroll(0, 0);
+    this.page = 0;
+    this.comments = undefined;
+    this.isCollapsedComment = false;
   }
 
 }

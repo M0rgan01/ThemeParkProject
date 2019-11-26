@@ -89,7 +89,7 @@ public class ParkBusinessImpl implements ParkBusiness {
 
         Park parkCompare = findById(id);
 
-        if (!parkCompare.getName().equals(park.getName())){
+        if (!parkCompare.getName().equals(park.getName())) {
             park.setUrlName(StringNormalizer.normalize(park.getName()));
             if (parkRepository.findByUrlName(park.getUrlName()).isPresent())
                 throw new AlreadyExistException("park.name.already.exist");
@@ -104,12 +104,16 @@ public class ParkBusinessImpl implements ParkBusiness {
         Park park = findById(id);
 
         int total = 0;
+        int size = 0;
+        for (Comment comment : park.getComments()) {
+            if (comment.getNotation() != 0){
+                total += comment.getNotation();
+                size ++;
+            }
 
-        for (Comment comment: park.getComments()) {
-            total += comment.getNotation();
         }
 
-        float truncatedDouble = BigDecimal.valueOf((float) total / park.getComments().size())
+        float truncatedDouble = BigDecimal.valueOf((float) total / size)
                 .setScale(2, RoundingMode.HALF_UP)
                 .floatValue();
 

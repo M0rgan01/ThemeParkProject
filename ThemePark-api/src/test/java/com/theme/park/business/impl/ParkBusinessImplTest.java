@@ -29,7 +29,7 @@ public class ParkBusinessImplTest {
     private ParkRepository parkRepository;
 
     private Park park;
-
+    private List<Comment> comments;
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -43,7 +43,7 @@ public class ParkBusinessImplTest {
         Comment comment2 = new Comment();
         comment2.setNotation(5);
 
-        List<Comment> comments = new ArrayList<>();
+        comments = new ArrayList<>();
         comments.add(comment);
         comments.add(comment1);
         comments.add(comment2);
@@ -63,5 +63,26 @@ public class ParkBusinessImplTest {
 
         assertEquals(argument.getValue().getGlobalNotation(), 3.6, 0.1);
     }
+
+    @Test
+    public void testUpdateNotation2() throws NotFoundException {
+        Comment comment3 = new Comment();
+        comment3.setNotation(1);
+        Comment comment4 = new Comment();
+        comment4.setNotation(2);
+        comments.add(comment3);
+        comments.add(comment4);
+        park.setComments(comments);
+
+        Mockito.when(parkRepository.findById(1L)).thenReturn(Optional.of(park));
+
+        parkBusiness.updateNotation(1L);
+
+        ArgumentCaptor<Park> argument = ArgumentCaptor.forClass(Park.class);
+        verify(parkRepository).save(argument.capture());
+
+        assertEquals(argument.getValue().getGlobalNotation(), 2.8, 0.1);
+    }
+
 
 }
