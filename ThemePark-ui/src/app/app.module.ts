@@ -24,6 +24,8 @@ import {TokenInterceptor} from '../interceptor/http-interceptor';
 import {AdminGuardService} from '../service/admin-guard.service';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import { DateAgoPipe } from '../pipe/date-ago.pipe';
+import {DragDropDirective} from '../directive/drag-drop.directive';
+import { EditPhotoComponent } from './edit-photo/edit-photo.component';
 
 const config = new AuthServiceConfig([
   {
@@ -62,7 +64,9 @@ export function tokenGetters() {
     AboutComponent,
     EditParkComponent,
     HomeComponent,
-    DateAgoPipe
+    DateAgoPipe,
+    DragDropDirective,
+    EditPhotoComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 import {Country} from './country.model';
+import {Photo} from './photo.model';
 
 export class Park {
   id: number;
@@ -14,4 +15,5 @@ export class Park {
   dateCreation: Date;
   openingDate: Date;
   comments: Array<Comment>;
+  photos: Array<Photo>;
 }

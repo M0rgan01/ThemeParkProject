@@ -1,0 +1,84 @@
+<div class="row">
+  <div class="col-md-6 offset-md-3 mt-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Edition de photo</h5>
+        <div class="form-group">
+          <label for="typeahead-http3">Choisir un parc :</label>
+          <input name="park" maxlength="100" id="typeahead-http3" type="text" class="form-control"
+                 [class.is-invalid]="searchFailed"
+                 [ngbTypeahead]="searchPark"
+                 [resultFormatter]="formatterPark" [inputFormatter]="formatterPark" [resultTemplate]="rs"
+                 [(ngModel)]="park"
+                 [editable]='false'
+                 placeholder="Recherche" required="park"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="park" class="row">
+  <div class="col-md-6 offset-md-3 mt-3">
+    <div class="card">
+      <div class="card-body">
+
+        <h5 class="card-title">Ajouter des photos</h5>
+        <div class="uploadfilecontainer d-flex align-items-center justify-content-center form-group"
+             (click)="fileInput.click()"
+             appDragDrop (onFileDropped)="addFile($event)">
+
+          <div class="row">
+            <div class="col-12 text-center">
+              <i class="fas fa-download fa-5x text-secondary"></i>
+            </div>
+            <div class="col-12 text-center mt-1">
+              <span class="text-secondary font-weight-bold">Glisser déposser ou choisir un fichier</span>
+            </div>
+          </div>
+
+          <input hidden type="file" #fileInput (click)="fileInput.value = null" (change)="addFile($event.target.files)">
+        </div>
+
+        <div *ngFor="let file of files;let i= index">
+          <div class="input-group mb-2">
+            <div (click)="deleteAttachment(i)" class="input-group-prepend cliquable">
+              <span class="input-group-text bg-danger text-white" id="inputGroupPrepend">Supprimer</span>
+            </div>
+            <span class="form-control overflow-hidden">{{ file.name }}</span>
+          </div>
+        </div>
+
+        <button [disabled]="files.length === 0" class="btn btn-success" (click)="uploadFile()">Ajouter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="park && park.photos.length !== 0" class="row">
+  <div class="col-md-8 offset-md-2 mt-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Retirer des photos</h5>
+        <div class="row">
+          <div class="col-md-6" *ngFor="let photo of park.photos">
+            <div class="jumbotron text-center p-3">
+              <img class="img-fluid img-thumbnail my-2" [src]="api.host + '/public/photo/' + photo.id"
+                   [alt]="photo.name">
+              <div class="text-center">
+                <button class="btn btn-danger" (click)="onDeleteFile(photo.id)">Supprimer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <ng-template #rs let-r="result" let-s="term">
+    <ngb-highlight [result]="r.name" [term]="s"></ngb-highlight>
+    <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px"
+         [alt]="r.name">
+  </ng-template>
+
