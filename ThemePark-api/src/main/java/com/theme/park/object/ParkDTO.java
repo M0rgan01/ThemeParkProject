@@ -58,13 +58,12 @@ public class ParkDTO {
     @ApiModelProperty(notes = "Information sur l'ouverture du parc", example = "Ouvert toute l'année")
     private String opening;
 
-    @ApiModelProperty(notes = "URL des photos du parc")
-    private List<String> photoList;
-
     @ApiModelProperty(notes = "Date de création du parc sur l'application", readOnly = true)
     private Date dateCreation;
 
     @ApiModelProperty(notes = "Date de création du parc")
     private Date openingDate;
 
+    @ApiModelProperty(notes = "Photos du parc")
+    private List<PhotoDTO> photos;
 }

@@ -24,16 +24,12 @@ export class EditParkComponent implements OnInit, OnDestroy {
   private title: string;
   private submit: string;
 
-  constructor(public authService: AuthenticationService,
-              public api: APIService,
+  constructor(public api: APIService,
               public router: Router,
               public activeRoute: ActivatedRoute) {
   }
 
   ngOnInit() {
-    /*if (!this.authService.isAdmin()) {
-      this.router.navigateByUrl('/404');
-    }*/
     this.events = this.router.events.subscribe((val) => {
       // si la navigation arrive à terme (il y a plusieur event, donc on en garde que un pour éviter plusieur éxécution)
       if (val instanceof NavigationEnd && val.url.startsWith('/admin/park')) {
@@ -100,6 +96,7 @@ export class EditParkComponent implements OnInit, OnDestroy {
     });
   }
 
+
   ////////////////////// SEARCH ////////////////////////
 
   formatterCountry = (x: { countryNameEn: string }) => x.countryNameEn;
@@ -121,7 +118,7 @@ export class EditParkComponent implements OnInit, OnDestroy {
           }))
       ),
       tap(() => this.searching = false)
-    )
+    );
 
   searchPark = (text: Observable<string>) =>
     text.pipe(
@@ -139,7 +136,7 @@ export class EditParkComponent implements OnInit, OnDestroy {
           }))
       ),
       tap(() => this.searching = false)
-    )
+    );
 
   //////////////////////// RESET ///////////////////////
 

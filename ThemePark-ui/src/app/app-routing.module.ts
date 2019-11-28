@@ -9,6 +9,7 @@ import {AboutComponent} from './about/about.component';
 import {ErrorComponent} from './error/error.component';
 import {FourHoFourComponent} from './four-ho-four/four-ho-four.component';
 import {AdminGuardService} from '../service/admin-guard.service';
+import {EditPhotoComponent} from './edit-photo/edit-photo.component';
 
 
 export const routes: Routes = [
@@ -19,7 +20,8 @@ export const routes: Routes = [
   {path: 'about', component: AboutComponent},
   {path: 'error', component: ErrorComponent},
   {path: 'admin', canActivate: [AuthGuardService, AdminGuardService], children: [
-    {path: 'park/:operation', component: EditParkComponent}]},
+      {path: 'park/:operation', component: EditParkComponent},
+      {path: 'photo', component: EditPhotoComponent}]},
   {path: 'not-found', component: FourHoFourComponent},
   {path: '**', redirectTo: 'not-found'}
 ];

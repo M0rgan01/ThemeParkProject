@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -64,7 +65,6 @@ public class ParkController {
 
     Page<Park> parks = parkBusiness.searchParks(searchCriteriaList, page, size);
     Page<ParkDTO> parkDTOS = parks.map(park -> modelMapper.map(park, ParkDTO.class));
-
         return ResponseEntity.ok().body(parkDTOS);
     }
 

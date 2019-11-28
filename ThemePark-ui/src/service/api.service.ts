@@ -43,6 +43,19 @@ export class APIService {
     return this.http.post<T>(this.host + url, obj);
   }
 
+  deleteRessources<T>(url): Observable<T> {
+    return this.http.delete<T>(this.host + url);
+  }
+
+  /////////////////////////////// UPLOAD /////////////////////////////////
+
+  uploadPhoto(file: File, url) {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    return this.http.post(this.host + url, formData, {reportProgress: true, observe: 'events'});
+  }
+
+
   /////////////////////////////// RESSOURCES AUTOCOMPLETE  /////////////////////////////////
 
   searchPark(term: string) {

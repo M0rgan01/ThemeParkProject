@@ -8,7 +8,6 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,24 @@ public class HandleException {
     @ResponseBody
     public ErrorResponse handleException(HttpMessageNotReadableException ex) {
         return ErrorResponse.of("json.error", HttpStatus.PRECONDITION_FAILED);
+    }
+
+
+    //////////////////////////// FILE ERROR /////////////////////////////
+
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseBody
+    public ErrorResponse handleException(MaxUploadSizeExceededException ex) {
+        return ErrorResponse.of("file.size.exceeded", HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(NoSuchFileException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleException(NoSuchFileException ex) {
+        return ErrorResponse.of("img.not.found", HttpStatus.NOT_FOUND);
     }
 
     //////////////////////////// VALIDATION ERROR /////////////////////////////

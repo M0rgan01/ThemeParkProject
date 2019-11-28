@@ -9,9 +9,10 @@
 
         <form #f=ngForm (ngSubmit)="operation === 'create' ? onSubmitCreatePark() : onSubmitEditPark()">
 
-          <div *ngIf="!park" class="form-group">
+          <div *ngIf="operation === 'edit'" class="form-group">
             <label for="typeahead-http3">Parc à modifier :</label>
             <input name="park" maxlength="100" id="typeahead-http3" type="text" class="form-control"
+                   [class.is-valid]="park"
                    [class.is-invalid]="searchFailed"
                    [ngbTypeahead]="searchPark"
                    [resultFormatter]="formatterPark" [inputFormatter]="formatterPark" [resultTemplate]="rs"
@@ -94,6 +95,7 @@
   </div>
 
 </div>
+
 
 <!--//////////////////////////////// TEMPLATE ///////////////////////////////-->
 
