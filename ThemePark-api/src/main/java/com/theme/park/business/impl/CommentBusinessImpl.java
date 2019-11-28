@@ -4,7 +4,7 @@ import com.theme.park.business.CommentBusiness;
 import com.theme.park.business.ParkBusiness;
 import com.theme.park.business.SocialUserBusiness;
 import com.theme.park.doa.CommentRepository;
-import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.object.SearchCriteria;
 import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Comment;
 import com.theme.park.exception.CriteriaException;

@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {Park} from '../../model/park.model';
 import {APIService} from '../../service/api.service';
 import {Photo} from '../../model/photo.model';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
+import {Toast} from '../../model/toast.model';
+import {ToastService} from '../../service/toast.service';
 
 @Component({
   selector: 'app-edit-photo',
@@ -13,14 +15,13 @@ import {HttpEventType, HttpResponse} from '@angular/common/http';
 })
 export class EditPhotoComponent implements OnInit {
 
-  private title = 'Edition de photo';
-  private success: string;
   private files: Array<any> = new Array<any>();
   private park: Park;
   private searching = false;
   private searchFailed = false;
 
-  constructor(private api: APIService) { }
+  constructor(private api: APIService, private toastService: ToastService) {
+  }
 
   ngOnInit() {
   }
@@ -49,9 +50,26 @@ export class EditPhotoComponent implements OnInit {
   ///////////////////// SUBMIT FILE //////////////////////////
 
   addFile(event) {
-    for (let index = 0; index < event.length; index++) {
-      const element = event[index];
-      this.files.push(element);
+    if (event.length > 6) {
+      this.toastService.show(new Toast('Vous ne pouvez envoyer que 6 fichiers maximum', 'bg-danger text-light', 10000));
+    } else {
+      for (let index = 0; index < event.length; index++) {
+        if (this.files.length === 6) {
+          this.toastService.show(new Toast('Vous ne pouvez envoyer que 6 fichiers maximum', 'bg-danger text-light', 10000));
+          break;
+        } else {
+          const element = event[index];
+          if (element.type === 'image/jpeg' || element.type === 'image/png') {
+            if ((element.size / Math.pow(1024, 2)) < 5) {
+              this.files.push(element);
+            } else {
+              this.toastService.show(new Toast('Le fichier ' + element.name + ' est trop volumineux', 'bg-danger text-light', 10000));
+            }
+          } else {
+            this.toastService.show(new Toast('Le fichier ' + element.name + ' n\'a pas le bon format', 'bg-danger text-light', 10000));
+          }
+        }
+      }
     }
   }
 
@@ -63,6 +81,9 @@ export class EditPhotoComponent implements OnInit {
     const size = this.files.length;
     for (let index = 0; index < size; index++) {
       this.api.uploadPhoto(this.files[index], '/userRole/photo/' + this.park.id).subscribe(value => {
+
+
+
         // si le type est un événement de UploadProgress
         if (value.type === HttpEventType.UploadProgress) {
           console.log(Math.round(100 * value.loaded / value.total));
@@ -73,10 +94,13 @@ export class EditPhotoComponent implements OnInit {
           // this.successUpload = 'Mise à jour réussie !';
           // this.product.photo = ' ';
         }
-      }, error1 => {}, () => {
+
+
+
+      }, error1 => {
+      }, () => {
         if (index + 1 === size) {
-          console.log('Ajout réussi !');
-          this.success = 'Ajout réussi !';
+          this.toastService.show(new Toast('Succes de l\'ajout', 'bg-success text-light', 5000));
           this.reloadPhotos();
         }
         this.files.splice(0, 1);
@@ -88,6 +112,7 @@ export class EditPhotoComponent implements OnInit {
 
   onDeleteFile(id: number) {
     this.api.deleteRessources<Photo>('/userRole/photo/' + id).subscribe(value => {
+      this.toastService.show(new Toast('Succes de la suppression', 'bg-success text-light', 5000));
       this.reloadPhotos();
     });
   }

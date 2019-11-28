@@ -1,4 +1,4 @@
-package com.theme.park.doa.specification;
+package com.theme.park.object;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -26,6 +26,8 @@ import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import { DateAgoPipe } from '../pipe/date-ago.pipe';
 import {DragDropDirective} from '../directive/drag-drop.directive';
 import { EditPhotoComponent } from './edit-photo/edit-photo.component';
+import { ToastComponent } from './toast/toast.component';
+import {ToastService} from '../service/toast.service';
 
 const config = new AuthServiceConfig([
   {
@@ -66,7 +68,8 @@ export function tokenGetters() {
     HomeComponent,
     DateAgoPipe,
     DragDropDirective,
-    EditPhotoComponent
+    EditPhotoComponent,
+    ToastComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +81,7 @@ export function tokenGetters() {
     InfiniteScrollModule,
     JwtModule.forRoot(JWTModuleOptions)
   ],
-  providers: [APIService, AuthGuardService, AdminGuardService, AuthenticationService, {
+  providers: [APIService, AuthGuardService, AdminGuardService, AuthenticationService, ToastService, {
     provide: AuthServiceConfig,
     useFactory: provideConfig
   },

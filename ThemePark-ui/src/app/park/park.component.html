@@ -10,20 +10,13 @@
                 max="5" placement="top" [ngbTooltip]="park.globalNotation"></ngb-rating>
   </div>
 
-  <div class="offset-2 col-8">
+  <div *ngIf="park.photos && park.photos.length !== 0" class="offset-2 col-8">
     <ngb-carousel style="outline: none">
-      <ng-template ngbSlide>
-        <div>
-          <img class="img-fluid rounded" src="https://www.okayama-japan.jp/cms/wp-content/uploads/2015/11/01.kourakuen5-900x600.jpg" alt="">
-        </div>
-      </ng-template>
-       <ng-template ngbSlide>
-         <img class="img-fluid rounded" src="https://www.drinks-insight-network.com/wp-content/uploads/sites/23/2019/03/deals_1-900x600.jpg" alt="">
-       </ng-template>
-      <ng-template ngbSlide>
-        <img class="img-fluid rounded" src="https://yard.media/wp-content/uploads/2015/09/burningmanMatthieuVautrin2-900x600.jpg" alt="">
-      </ng-template>
-    </ngb-carousel>
+        <ng-template *ngFor="let photo of park.photos" ngbSlide>
+           <img class="img-fluid rounded" [src]="api.host + '/public/photo/' + photo.id"
+                 [alt]="photo.name">
+        </ng-template>
+   </ngb-carousel>
   </div>
 
 
@@ -31,7 +24,8 @@
 
 <!--//////////////////////////////// ADD COMMENTS ////////////////////////////////////////-->
 
-<button *ngIf="authService.isAuth()" class="btn btn-primary" (click)="isCollapsedComment = !isCollapsedComment" aria-controls="commentForm">Laissez
+<button *ngIf="authService.isAuth()" class="btn btn-primary" (click)="isCollapsedComment = !isCollapsedComment"
+        aria-controls="commentForm">Laissez
   un avis
 </button>
 
@@ -105,3 +99,5 @@
     <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
   </span>
 </ng-template>
+
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

@@ -1,6 +1,6 @@
 package com.theme.park.business;
 
-import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.object.SearchCriteria;
 import com.theme.park.entities.Country;
 import com.theme.park.exception.CriteriaException;
 import org.springframework.data.domain.Page;

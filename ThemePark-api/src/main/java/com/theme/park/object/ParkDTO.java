@@ -23,7 +23,7 @@ public class ParkDTO {
 
     @ApiModelProperty(notes = "Nom du parc", example = "Europa park", required = true)
     @NotBlank(message = "park.name.empty")
-    @Size(max = 100, message = "park.name.max.value.not.correct")
+    @Size(min = 5, max = 100, message = "park.name.value.not.correct")
     private String name;
 
     @ApiModelProperty(notes = "Nom du parc, format URL", example = "Europa park", readOnly = true)
@@ -49,6 +49,7 @@ public class ParkDTO {
 
     @ApiModelProperty(notes = "Nombre d'attraction du parc du parc", example = "15")
     @Max(value = 999, message = "park.attraction.number.max.value")
+    @Min(value = 0, message = "park.attraction.number.min.value")
     private int attractionNumber;
 
     @ApiModelProperty(notes = "URL officiel du parc", example = "https://www.europapark.de/fr")
