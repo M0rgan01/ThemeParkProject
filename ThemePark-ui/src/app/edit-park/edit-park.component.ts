@@ -1,10 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {APIService} from '../../service/api.service';
-import {AuthenticationService} from '../../service/authentification.service';
 import {Park} from '../../model/park.model';
 import {Observable, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {ToastService} from '../../service/toast.service';
+import {Toast} from '../../model/toast.model';
 
 @Component({
   selector: 'app-edit-park',
@@ -13,9 +14,6 @@ import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rx
 })
 export class EditParkComponent implements OnInit, OnDestroy {
 
-  private error: string;
-  private errors: Array<any>;
-  private success: string;
   private events;
   private operation: string;
   private park: Park;
@@ -26,7 +24,8 @@ export class EditParkComponent implements OnInit, OnDestroy {
 
   constructor(public api: APIService,
               public router: Router,
-              public activeRoute: ActivatedRoute) {
+              public activeRoute: ActivatedRoute,
+              public toastService: ToastService) {
   }
 
   ngOnInit() {
@@ -46,7 +45,6 @@ export class EditParkComponent implements OnInit, OnDestroy {
   //////////////////////////// CONTEXT //////////////////////////
 
   setContext() {
-    this.setNullErrorAndSuccess();
     // récupération de l'opération à éffectué
     if (this.activeRoute.snapshot.paramMap.get('operation')) {
       this.operation = this.activeRoute.snapshot.paramMap.get('operation');
@@ -69,29 +67,33 @@ export class EditParkComponent implements OnInit, OnDestroy {
   ///////////////////// SUBMIT //////////////////////////
 
   onSubmitCreatePark() {
-    this.setNullErrorAndSuccess();
     this.api.postRessources<Park>('/adminRole/park', this.park).subscribe(data => {
-      this.success = 'Création réussie !';
+      this.toastService.show(new Toast('Succes de la création', 'bg-success text-light', 5000));
     }, error1 => {
       if (error1.error.error) {
-        this.error = error1.error.error;
+        this.toastService.show(new Toast(error1.error.error, 'bg-danger text-light', 10000));
       }
       if (error1.error.errors) {
-        this.errors = error1.error.errors;
+        for (let i = 0; i < error1.error.errors.length; i++) {
+          console.log(error1.error.errors[i]);
+          this.toastService.show(new Toast(error1.error.errors[i].message, 'bg-danger text-light', 10000));
+        }
       }
     });
   }
 
   onSubmitEditPark() {
-    this.setNullErrorAndSuccess();
     this.api.putRessources<Park>('/userRole/park/' + this.park.id, this.park).subscribe(data => {
-      this.success = 'Modification réussie !';
+      this.toastService.show(new Toast('Modification réussie !', 'bg-success text-light', 5000));
     }, error1 => {
       if (error1.error.error) {
-        this.error = error1.error.error;
+        this.toastService.show(new Toast(error1.error.error, 'bg-danger text-light', 10000));
       }
       if (error1.error.errors) {
-        this.errors = error1.error.errors;
+        for (let i = 0; i < error1.error.errors.length; i++) {
+          console.log(error1.error.errors[i]);
+          this.toastService.show(new Toast(error1.error.errors[i].message, 'bg-danger text-light', 10000));
+        }
       }
     });
   }
@@ -143,11 +145,4 @@ export class EditParkComponent implements OnInit, OnDestroy {
   resetCountry() {
     this.park.country = null;
   }
-
-  setNullErrorAndSuccess() {
-    this.success = null;
-    this.errors = null;
-    this.error = null;
-  }
-
 }

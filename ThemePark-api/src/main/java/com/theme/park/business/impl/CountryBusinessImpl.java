@@ -2,7 +2,7 @@ package com.theme.park.business.impl;
 
 import com.theme.park.business.CountryBusiness;
 import com.theme.park.doa.CountryRepository;
-import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.object.SearchCriteria;
 import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Country;
 import com.theme.park.exception.CriteriaException;

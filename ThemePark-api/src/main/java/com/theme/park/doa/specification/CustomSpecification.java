@@ -1,6 +1,7 @@
 package com.theme.park.doa.specification;
 
 import com.theme.park.exception.CriteriaException;
+import com.theme.park.object.SearchCriteria;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 

@@ -7,6 +7,8 @@ import {AuthenticationService} from '../../service/authentification.service';
 import {SocialUser} from 'angularx-social-login';
 import {Page} from '../../model/page.model';
 import {SearchCriteria} from '../../model/search-criteria.model';
+import {ToastService} from '../../service/toast.service';
+import {Toast} from '../../model/toast.model';
 
 @Component({
   selector: 'app-park',
@@ -27,7 +29,8 @@ export class ParkComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute,
               private router: Router,
               private api: APIService,
-              private authService: AuthenticationService) {
+              private authService: AuthenticationService,
+              private toastService: ToastService) {
   }
 
   ngOnInit() {
@@ -48,6 +51,7 @@ export class ParkComponent implements OnInit {
     this.comment.socialUser.email = this.authService.getEmail();
     this.comment.socialUser.provider = this.authService.getProvider();
     this.api.postRessources<Comment>('/userRole/comment', this.comment).subscribe(value => {
+      this.toastService.show(new Toast('Succès de l\'ajout du commentaire', 'bg-success text-light', 5000));
       this.comment = new Comment();
       this.comment.notation = 0;
       this.resetContext();
@@ -62,8 +66,8 @@ export class ParkComponent implements OnInit {
   loadComments(page: number, size: number) {
 
     const listSearchCriteria = new Array<SearchCriteria>();
-    const searchCriteria = new SearchCriteria('park.id', ':', this.park.id);
-    listSearchCriteria.push(searchCriteria);
+    listSearchCriteria.push(new SearchCriteria('park.id', ':', this.park.id));
+    listSearchCriteria.push(new SearchCriteria('date', 'ORDER_BY_DESC', null));
 
     this.api.getRessources<Page<Comment>>('/public/comments/' + page + '/' + size + '?values=' +
       btoa(JSON.stringify(listSearchCriteria))).subscribe(value => {
@@ -85,10 +89,10 @@ export class ParkComponent implements OnInit {
   }
 
   resetContext() {
-    window.scroll(0, 0);
     this.page = 0;
     this.comments = undefined;
     this.isCollapsedComment = false;
+    this.infiniteScrollDisable = false;
   }
 
 }

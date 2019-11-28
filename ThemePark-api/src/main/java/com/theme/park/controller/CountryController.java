@@ -2,7 +2,7 @@ package com.theme.park.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theme.park.business.CountryBusiness;
-import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.object.SearchCriteria;
 import com.theme.park.entities.Country;
 import com.theme.park.exception.CriteriaException;
 import com.theme.park.object.CountryDTO;

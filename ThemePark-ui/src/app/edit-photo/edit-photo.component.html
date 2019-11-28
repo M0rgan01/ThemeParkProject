@@ -1,3 +1,5 @@
+<!--/////////////////////////////////// CHOIX DU PARC ///////////////////////////////////-->
+
 <div class="row">
   <div class="col-md-6 offset-md-3 mt-5">
     <div class="card">
@@ -18,12 +20,17 @@
   </div>
 </div>
 
+<!--/////////////////////////////////// AJOUT DE PHOTOS ///////////////////////////////////-->
+
 <div *ngIf="park" class="row">
   <div class="col-md-6 offset-md-3 mt-3">
     <div class="card">
       <div class="card-body">
 
         <h5 class="card-title">Ajouter des photos</h5>
+
+        <p><small>Fichiers acceptés : PNG et JPEG, 900x600, 5MB maximum. Ajout par paquet de 6 maximum</small></p>
+
         <div class="uploadfilecontainer d-flex align-items-center justify-content-center form-group"
              (click)="fileInput.click()"
              appDragDrop (onFileDropped)="addFile($event)">
@@ -55,6 +62,8 @@
   </div>
 </div>
 
+<!--/////////////////////////////////// AFFICHAGE DES PHOTOS ///////////////////////////////////-->
+
 <div *ngIf="park && park.photos.length !== 0" class="row">
   <div class="col-md-8 offset-md-2 mt-3">
     <div class="card">
@@ -74,11 +83,14 @@
       </div>
     </div>
   </div>
+</div>
 
+<!--/////////////////////////////////// TEMPLATE ///////////////////////////////////-->
 
-  <ng-template #rs let-r="result" let-s="term">
-    <ngb-highlight [result]="r.name" [term]="s"></ngb-highlight>
-    <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px"
-         [alt]="r.name">
-  </ng-template>
+<ng-template #rs let-r="result" let-s="term">
+  <ngb-highlight [result]="r.name" [term]="s"></ngb-highlight>
+  <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px"
+       [alt]="r.name">
+</ng-template>
 
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

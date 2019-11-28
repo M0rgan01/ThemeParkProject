@@ -2,7 +2,7 @@ package com.theme.park.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theme.park.business.ParkBusiness;
-import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.object.SearchCriteria;
 import com.theme.park.entities.Park;
 import com.theme.park.exception.AlreadyExistException;
 import com.theme.park.exception.CriteriaException;
@@ -16,7 +16,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;

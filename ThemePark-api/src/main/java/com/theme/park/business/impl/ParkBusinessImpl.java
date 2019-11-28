@@ -2,7 +2,7 @@ package com.theme.park.business.impl;
 
 import com.theme.park.business.ParkBusiness;
 import com.theme.park.doa.ParkRepository;
-import com.theme.park.doa.specification.SearchCriteria;
+import com.theme.park.object.SearchCriteria;
 import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Comment;
 import com.theme.park.entities.Park;

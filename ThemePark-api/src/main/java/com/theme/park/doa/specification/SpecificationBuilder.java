@@ -1,5 +1,6 @@
 package com.theme.park.doa.specification;
 
+import com.theme.park.object.SearchCriteria;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
