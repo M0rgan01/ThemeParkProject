@@ -100,7 +100,7 @@ public class HandleException {
         return ErrorResponse.of(errorDetails, HttpStatus.NOT_ACCEPTABLE);
     }
 
-    //////////////////////////// AUTHENTICATION ERROR /////////////////////////////
+    //////////////////////////// AUTHENTICATION ERROR JWT REFRESH /////////////////////////////
 
     // compte utilisateur suspendu
     @ExceptionHandler(DisabledException.class)
@@ -143,6 +143,14 @@ public class HandleException {
     public ErrorResponse handleException(NotFoundException ex) {
         return ErrorResponse.of(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(UserNotMatchException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleException(UserNotMatchException ex) {
+        return ErrorResponse.of(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
 
     @ExceptionHandler(AlreadyExistException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)

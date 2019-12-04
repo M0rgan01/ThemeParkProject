@@ -28,6 +28,7 @@ import {DragDropDirective} from '../directive/drag-drop.directive';
 import { EditPhotoComponent } from './edit-photo/edit-photo.component';
 import { ToastComponent } from './toast/toast.component';
 import {ToastService} from '../service/toast.service';
+import { EditCommentComponent } from './edit-comment/edit-comment.component';
 
 const config = new AuthServiceConfig([
   {
@@ -69,7 +70,8 @@ export function tokenGetters() {
     DateAgoPipe,
     DragDropDirective,
     EditPhotoComponent,
-    ToastComponent
+    ToastComponent,
+    EditCommentComponent
   ],
   imports: [
     BrowserModule,

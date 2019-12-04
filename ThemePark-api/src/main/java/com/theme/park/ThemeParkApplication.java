@@ -574,6 +574,7 @@ public class ThemeParkApplication implements CommandLineRunner {
         park4.setCountry(US);
         park4.setName("Europa Park2");
         parkRepository.save(park4);
-*/
+        */
+
     }
 }

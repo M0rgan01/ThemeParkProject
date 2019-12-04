@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Création, modification, et vérification de JWT
@@ -37,12 +38,13 @@ public interface JwtService {
     String createRefreshToken(SocialUser userContext) throws IllegalArgumentException;
 
     /**
-     * Vérification de conformité d'un refresh token
+     * Récupère un utilisateur grace a un token
      *
      * @param token --> token à vérifier
      * @return claims
      */
-    SocialUser validateRefreshToken(JwtToken token) throws AuthenticationException;
+    SocialUser getUserWithToken(JwtToken token) throws AuthenticationException;
+    SocialUser getUserWithAccessCookie(HttpServletRequest httpServletRequest) throws AuthenticationException;
 
     /**
      * Parses and validates JWT Token signature.

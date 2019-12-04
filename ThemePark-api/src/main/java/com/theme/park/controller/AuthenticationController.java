@@ -39,7 +39,7 @@ public class AuthenticationController {
         JwtToken refreshToken = new JwtToken(refreshCookie.getValue());
 
         // on créer un token JWT, grace à la vérification du tokenRefresh
-        String accessToken = jwtService.createAuthToken(jwtService.validateRefreshToken(refreshToken));
+        String accessToken = jwtService.createAuthToken(jwtService.getUserWithToken(refreshToken));
 
         response.addCookie(jwtService.createAccessTokenCookie(accessToken));
 

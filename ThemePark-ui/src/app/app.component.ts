@@ -18,6 +18,7 @@ export class AppComponent implements OnInit  {
   private isToggledNavBar = false;
   private isToggledSideBar = false;
   private isCollapsedAdmin = false;
+  private isCollapsedAccount = false;
 
   // affichage component sans side/nav bar
   private listEmptyViewPath = ['login'];

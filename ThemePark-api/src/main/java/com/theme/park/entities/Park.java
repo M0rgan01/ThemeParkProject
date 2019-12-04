@@ -18,6 +18,7 @@ public class Park {
     private Long id;
     private String name;
     private String urlName;
+    private String description;
     private float globalNotation;
     private String location;
     private String gps;

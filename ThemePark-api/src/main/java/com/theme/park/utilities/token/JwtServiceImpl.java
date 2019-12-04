@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public SocialUser validateRefreshToken(JwtToken token) throws AuthenticationException {
+    public SocialUser getUserWithToken(JwtToken token) throws AuthenticationException {
 
         // vérification du token
         Jws<Claims> claims = parseClaims(token.getToken());
@@ -96,6 +97,12 @@ public class JwtServiceImpl implements JwtService {
         } catch (NotFoundException e) {
             throw new AuthenticationCredentialsNotFoundException("user.not.found");
         }
+    }
+
+    @Override
+    public SocialUser getUserWithAccessCookie(HttpServletRequest request) throws AuthenticationException {
+        Cookie accessCookie = findToken(request.getCookies(), accessTokenPrefix);
+        return getUserWithToken(new JwtToken(accessCookie.getValue()));
     }
 
     @Override
