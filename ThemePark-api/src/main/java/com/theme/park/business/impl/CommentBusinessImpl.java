@@ -4,6 +4,8 @@ import com.theme.park.business.CommentBusiness;
 import com.theme.park.business.ParkBusiness;
 import com.theme.park.business.SocialUserBusiness;
 import com.theme.park.doa.CommentRepository;
+import com.theme.park.exception.AlreadyExistException;
+import com.theme.park.exception.UserNotMatchException;
 import com.theme.park.object.SearchCriteria;
 import com.theme.park.doa.specification.SpecificationBuilder;
 import com.theme.park.entities.Comment;
@@ -65,17 +67,43 @@ public class CommentBusinessImpl implements CommentBusiness {
     @Override
     @Transactional
     public Comment updateComment(Long id, Comment comment) throws NotFoundException {
+        Comment commentCompare = getCommentById(id);
+        boolean updateNotation = false;
 
-        comment = commentRepository.save(comment);
-        logger.info("Update comment with id " + id);
-        parkBusiness.updateNotation(comment.getPark().getId());
+        if (comment.getSocialUser().getSocialUserId() != commentCompare.getSocialUser().getSocialUserId())
+            throw new UserNotMatchException("user.not.match");
+
+        if (!comment.getContent().equals(commentCompare.getContent()))
+            commentCompare.setContent(comment.getContent());
+
+        if (comment.getNotation() != commentCompare.getNotation()) {
+            commentCompare.setNotation(comment.getNotation());
+            updateNotation = true;
+        }
+
+        commentCompare.setUpdatedContent(true);
+
+        comment = commentRepository.save(commentCompare);
+
+        if (updateNotation)
+            parkBusiness.updateNotation(comment.getPark().getId());
+        logger.info("Turn updated --> comment with id " + id);
         return comment;
     }
 
     @Override
-    public void deleteComment(Long id) throws NotFoundException {
-        logger.info("Delete comment with id " + id);
-        commentRepository.delete(getCommentById(id));
+    public Comment deleteComment(Long id, Long socialUserId) throws NotFoundException, AlreadyExistException {
+        Comment comment = getCommentById(id);
+
+        if (comment.isDeleteComment()) {
+            throw new AlreadyExistException("comment.already.delete");
+        } else if (comment.getSocialUser().getSocialUserId() != socialUserId){
+            throw new UserNotMatchException("user.not.match");
+        }
+
+        comment.setDeleteComment(true);
+        logger.info("Turn deleted --> comment with id " + id);
+       return commentRepository.save(comment);
     }
 
     @Override

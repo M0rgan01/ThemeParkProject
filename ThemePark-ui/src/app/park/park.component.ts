@@ -4,7 +4,6 @@ import {APIService} from '../../service/api.service';
 import {Park} from '../../model/park.model';
 import {Comment} from '../../model/comment.model';
 import {AuthenticationService} from '../../service/authentification.service';
-import {SocialUser} from 'angularx-social-login';
 import {Page} from '../../model/page.model';
 import {SearchCriteria} from '../../model/search-criteria.model';
 import {ToastService} from '../../service/toast.service';
@@ -47,15 +46,22 @@ export class ParkComponent implements OnInit {
 
   onSubmitComment() {
     this.comment.park = this.park;
-    this.comment.socialUser = new SocialUser();
-    this.comment.socialUser.email = this.authService.getEmail();
-    this.comment.socialUser.provider = this.authService.getProvider();
     this.api.postRessources<Comment>('/userRole/comment', this.comment).subscribe(value => {
       this.toastService.show(new Toast('Succès de l\'ajout du commentaire', 'bg-success text-light', 5000));
       this.comment = new Comment();
       this.comment.notation = 0;
       this.resetContext();
       this.loadComments(this.page, this.size);
+    }, error1 => {
+      if (error1.error.error) {
+        this.toastService.show(new Toast(error1.error.error, 'bg-danger text-light', 10000));
+      }
+      if (error1.error.errors) {
+        for (let i = 0; i < error1.error.errors.length; i++) {
+          console.log(error1.error.errors[i]);
+          this.toastService.show(new Toast(error1.error.errors[i].message, 'bg-danger text-light', 10000));
+        }
+      }
     });
   }
 

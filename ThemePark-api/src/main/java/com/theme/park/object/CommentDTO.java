@@ -25,16 +25,21 @@ public class CommentDTO {
     @NotBlank(message = "comment.content.null")
     private String content;
 
-    @ApiModelProperty(notes = "Date de création du commentaire")
+    @ApiModelProperty(notes = "Date de création du commentaire", readOnly = true)
     private Date date;
+
+    @ApiModelProperty(notes = "Visibilité d'un commentaire modifier", readOnly = true)
+    private boolean updated;
+
+    @ApiModelProperty(notes = "Visibilité d'un commentaire supprimer", readOnly = true)
+    private boolean delete;
 
     @ApiModelProperty(notes = "Note du commentaire", example = "4")
     @Min(value = 0, message = "comment.notation.min.value.not.correct")
     @Max(value = 5, message = "comment.notation.max.value.not.correct")
     private int notation;
 
-    @ApiModelProperty(notes = "Utilisateur du commentaire")
-    @NotNull(message = "comment.user.null")
+    @ApiModelProperty(notes = "Utilisateur du commentaire", readOnly = true)
     private SocialUserDTO socialUser;
 
     @ApiModelProperty(notes = "Park du commentaire")

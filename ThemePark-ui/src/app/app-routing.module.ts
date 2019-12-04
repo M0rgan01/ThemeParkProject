@@ -10,6 +10,7 @@ import {ErrorComponent} from './error/error.component';
 import {FourHoFourComponent} from './four-ho-four/four-ho-four.component';
 import {AdminGuardService} from '../service/admin-guard.service';
 import {EditPhotoComponent} from './edit-photo/edit-photo.component';
+import {EditCommentComponent} from './edit-comment/edit-comment.component';
 
 
 export const routes: Routes = [
@@ -22,6 +23,8 @@ export const routes: Routes = [
   {path: 'admin', canActivate: [AuthGuardService, AdminGuardService], children: [
       {path: 'park/:operation', component: EditParkComponent},
       {path: 'photo', component: EditPhotoComponent}]},
+  {path: 'account', canActivate: [AuthGuardService], children: [
+      {path: 'comment', component: EditCommentComponent}]},
   {path: 'not-found', component: FourHoFourComponent},
   {path: '**', redirectTo: 'not-found'}
 ];
