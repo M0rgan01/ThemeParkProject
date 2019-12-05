@@ -165,7 +165,7 @@
 
       <!-- Submenu content -->
       <div *ngIf="isAuth" id="collapse2" [ngbCollapse]="!isCollapsedAccount" class="collapse">
-        <a routerLink="/admin/park/create" class="list-group-item list-group-item-action text-white bg-dark">
+        <a routerLink="/account/comment" class="list-group-item list-group-item-action text-white bg-dark">
           <i class="fas fa-comments mx-2"></i>Mes avis
         </a>
       </div>
@@ -190,6 +190,7 @@
   </div>
 </div>
 
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
 
 <ng-template #rt let-r="result" let-t="term">
   <div (click)="submitSearch(r)">

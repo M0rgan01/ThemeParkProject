@@ -29,10 +29,10 @@ public class CommentDTO {
     private Date date;
 
     @ApiModelProperty(notes = "Visibilité d'un commentaire modifier", readOnly = true)
-    private boolean updated;
+    private boolean updatedContent;
 
     @ApiModelProperty(notes = "Visibilité d'un commentaire supprimer", readOnly = true)
-    private boolean delete;
+    private boolean deleteComment;
 
     @ApiModelProperty(notes = "Note du commentaire", example = "4")
     @Min(value = 0, message = "comment.notation.min.value.not.correct")

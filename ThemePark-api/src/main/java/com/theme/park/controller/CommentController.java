@@ -24,7 +24,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
-@Api( description="API de création et modification de commentaires")
+@Api(description = "API de création et modification de commentaires")
 @RestController
 @RequestMapping("/themeParkAPI")
 public class CommentController {
@@ -41,6 +41,19 @@ public class CommentController {
         this.jwtService = jwtService;
     }
 
+    @ApiOperation(value = "Récupération d'un commentaire")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Succès de la récupération"),
+            @ApiResponse(code = 406, message = "Erreur de critère"),
+            @ApiResponse(code = 500, message = "Erreur interne")
+    })
+    @GetMapping(value = "/public/comment/{id}")
+    public ResponseEntity<?> getComment(@PathVariable long id) throws NotFoundException {
+
+        Comment comment = commentBusiness.getCommentById(id);
+
+        return ResponseEntity.ok().body(modelMapper.map(comment, CommentDTO.class));
+    }
 
     @ApiOperation(value = "Recherche de commentaire")
     @ApiResponses(value = {
@@ -53,14 +66,15 @@ public class CommentController {
                                             @PathVariable int size,
                                             @RequestParam(required = false) String values) throws CriteriaException, IOException {
 
-        List<SearchCriteria> searchCriteriaList = SearchCriteria.convertBase64Url(values, objectMapper);
+        List<SearchCriteria> searchCriteriaList = null;
+        if (values != null)
+            searchCriteriaList = SearchCriteria.convertBase64Url(values, objectMapper);
 
         Page<Comment> comments = commentBusiness.searchComments(searchCriteriaList, page, size);
         Page<CommentDTO> commentDTOS = comments.map(comment -> modelMapper.map(comment, CommentDTO.class));
 
         return ResponseEntity.ok().body(commentDTOS);
     }
-
 
 
     @ApiOperation(value = "Création d'un commentaire")
@@ -86,7 +100,7 @@ public class CommentController {
             @ApiResponse(code = 404, message = "Aucune correspondance du commentaire"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @PutMapping(value = "/adminRole/comment/{id}")
+    @PutMapping(value = "/userRole/comment/{id}")
     public ResponseEntity<?> updateComment(@PathVariable Long id,
                                            @RequestBody @Valid CommentDTO commentDTO,
                                            HttpServletRequest request) throws NotFoundException {
@@ -105,7 +119,7 @@ public class CommentController {
             @ApiResponse(code = 404, message = "Aucune correspondance du commentaire"),
             @ApiResponse(code = 500, message = "Erreur interne")
     })
-    @DeleteMapping(value = "/adminRole/comment/{id}")
+    @DeleteMapping(value = "/userRole/comment/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable Long id,
                                            HttpServletRequest request) throws NotFoundException, AlreadyExistException {
 
