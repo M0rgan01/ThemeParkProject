@@ -1,0 +1,102 @@
+<div class="row">
+
+  <!--//////////////////////////////// CREATE / EDIT ///////////////////////////////-->
+
+  <div class="col-md-6 offset-md-3 mt-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{title}}</h5>
+
+        <form #f=ngForm (ngSubmit)="operation === 'create' ? onSubmitCreatePark() : onSubmitEditPark()">
+
+          <div *ngIf="operation === 'edit'" class="form-group">
+            <label for="typeahead-http3">Parc à modifier :</label>
+            <input name="park" maxlength="100" id="typeahead-http3" type="text" class="form-control"
+                   [class.is-valid]="park"
+                   [class.is-invalid]="searchFailed"
+                   [ngbTypeahead]="searchPark"
+                   [resultFormatter]="formatterPark" [inputFormatter]="formatterPark" [resultTemplate]="rs"
+                   [(ngModel)]="park"
+                   [editable]='false'
+                   placeholder="Recherche" required="park"/>
+          </div>
+
+          <div *ngIf="park">
+
+            <div class="form-group">
+              <label>Nom du parc : </label>
+              <input type="text" maxlength="100" required class="form-control" [class.is-valid]="park.name"
+                     [(ngModel)]="park.name"
+                     name="name">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col">
+                <label>Pays du parc : </label>
+                <input name="country" maxlength="100" [(ngModel)]="park.country" id="typeahead-http2" type="text"
+                       class="form-control"
+                       [class.is-invalid]="searchFailed"
+                       [class.is-valid]="park.country"
+                       [ngbTypeahead]="searchCountry"
+                       [resultFormatter]="formatterCountry" [inputFormatter]="formatterCountry" [resultTemplate]="rt"
+                       [editable]='false'
+                       [disabled]="park.country"
+                       placeholder="Recherche" autocomplete="no" required="park.country"/>
+              </div>
+              <div *ngIf="park.country" class="form-group col-md-4 align-self-end">
+                <button class="btn btn-primary" (click)="resetCountry()">Modifier</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Adresse du parc : </label>
+              <input type="text" maxlength="255" required class="form-control" [class.is-valid]="park.location"
+                     [(ngModel)]="park.location" name="location">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-xl-6">
+                <label>Coordonées GPS : </label>
+                <input type="text" maxlength="50" required class="form-control" [class.is-valid]="park.gps"
+                       [(ngModel)]="park.gps"
+                       name="gps">
+              </div>
+
+              <div class="form-group col-xl-6">
+                <label>Nombre d'attraction* : </label>
+                <input type="number" max="999" class="form-control" [class.is-valid]="park.attractionNumber"
+                       [(ngModel)]="park.attractionNumber"
+                       name="attractionNumber">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>URL officiel* : </label>
+              <input type="text" maxlength="255" class="form-control" [(ngModel)]="park.officialUrl" name="url">
+            </div>
+            <p>Les champs marqués * sont facultatifs</p>
+            <button [disabled]="f.invalid" class="btn btn-primary mt-2" type="submit">{{submit}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!--//////////////////////////////// TEMPLATE ///////////////////////////////-->
+
+<ng-template #rt let-r="result" let-t="term">
+  <img [src]="'https://www.countryflags.io/' + r.code + '/flat/32.png'" class="mr-2" style="width: 25px"
+       [alt]="r.name">
+  <ngb-highlight [result]="r.countryNameEn" [term]="t"></ngb-highlight>
+</ng-template>
+
+<ng-template #rs let-r="result" let-s="term">
+  <ngb-highlight [result]="r.name" [term]="s"></ngb-highlight>
+  <img [src]="'https://www.countryflags.io/' + r.country.code + '/flat/32.png'" class="ml-2" style="width: 25px"
+       [alt]="r.name">
+</ng-template>
+
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

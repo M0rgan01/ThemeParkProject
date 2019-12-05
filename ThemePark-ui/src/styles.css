@@ -1,1 +1,22 @@
+
 /* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+}
+
+.cliquable{
+  cursor: pointer;
+}
+
+.img-rounded{
+  border-radius: 50%;
+  height: 40px;
+}
+
+.close {
+  float: none;
+}
+
+.close span {
+  font-size: 1.2em;
+}

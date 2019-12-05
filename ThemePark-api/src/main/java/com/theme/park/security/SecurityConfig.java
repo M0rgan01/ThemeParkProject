@@ -7,7 +7,7 @@ import com.theme.park.security.auth.jwt.JwtAuthenticationProvider;
 import com.theme.park.security.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.theme.park.security.auth.login.LoginAuthenticationProvider;
 import com.theme.park.security.auth.login.LoginProcessingFilter;
-import com.theme.park.security.token.JwtService;
+import com.theme.park.utilities.token.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -74,8 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private List<String> allowedHeaders;
     @Value("#{'${cors.expose.headers}'.split(',')}")
     private List<String> exposeHeaders;
-    @Value("${jwt.header.token.auth}")
-    private String headerAuth;
+    @Value("${jwt.access.prefix}")
+    private String accessTokenPrefix;
 
     /**
      * Création du filtre d'authentification par login
@@ -103,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             List<String> pathsToSkip, String pattern) throws Exception {
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, pattern);
         JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(failureHandler,
-                jwtService, matcher, headerAuth);
+                matcher, accessTokenPrefix, jwtService);
         filter.setAuthenticationManager(this.authenticationManager);
         return filter;
     }
@@ -123,7 +123,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
 
         // desactive la protection par token generere automatiquement pour la faille
-        // crrf
+        // csrf
         http.csrf().disable().exceptionHandling().authenticationEntryPoint(this.authenticationEntryPoint);
 
         // desacive la creation de session par spring
@@ -167,13 +167,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         // indique les url autorisé
         configuration.setAllowedOrigins(allowedOrigins);
-        //configuration.setAllowedOrigins(Arrays.asList("*"));
         // méthode autorisé
         configuration.setAllowedMethods(allowedMethods);
         // en-tête autorisé
         configuration.setAllowedHeaders(allowedHeaders);
         // en-tête exposé
         configuration.setExposedHeaders(exposeHeaders);
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // les adresses utilisé avec la configuration cors
         source.registerCorsConfiguration("/**", configuration);

@@ -65,7 +65,6 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
         try {
             contact = objectMapper.readValue(request.getInputStream(), SocialUserDTO.class);
         } catch (Exception e) {
-            e.printStackTrace();
             logger.info("Json error for SocialUser object");
             throw new JsonException("json.error");
         }
@@ -81,6 +80,7 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(contact, null);
         //processus d'authentification
+
         return this.getAuthenticationManager().authenticate(token);
     }
 

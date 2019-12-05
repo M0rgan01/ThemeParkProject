@@ -1,0 +1,47 @@
+.loginBackGround{
+  background: url("../assets/img/main.jpg") no-repeat;
+  background-size: cover;
+}
+
+.logo{
+  height: 50px;
+}
+
+.nav-bg{
+  background: #393939;
+}
+
+.side-bar-bg{
+  background: #D5D4D2;
+  color: black;
+}
+
+/*lien sidebar*/
+.side-bar-bg div :hover{
+  text-decoration: none;
+  background: #A3A3A3;
+}
+/*lien déroulant sidebar*/
+.side-bar-bg div div :hover{
+  background: none;
+}
+
+.input-group-text {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  background: #75d7c7;
+}
+
+.active-bg{
+  background: dodgerblue;
+}
+
+.sticky-offset{
+  padding-top: 85px;
+}

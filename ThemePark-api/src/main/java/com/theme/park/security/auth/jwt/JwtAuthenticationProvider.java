@@ -1,11 +1,11 @@
 package com.theme.park.security.auth.jwt;
 
 
-import com.theme.park.security.token.JwtAuthenticationToken;
-import com.theme.park.security.token.JwtService;
-import com.theme.park.security.token.JwtToken;
 import com.theme.park.entities.Role;
 import com.theme.park.entities.SocialUser;
+import com.theme.park.utilities.token.JwtAuthenticationToken;
+import com.theme.park.utilities.token.JwtService;
+import com.theme.park.utilities.token.JwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.slf4j.Logger;
@@ -56,9 +56,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         //création d'un utilisateur grace au nom à la liste de role contenu dans le token
         SocialUser context = new SocialUser();
-        context.setName(subject);
+        context.setEmail(subject);
         context.setAuthorities(Role.getListAuthorities(listRoles));
-        logger.debug("Success authentication for user " + subject + " and provider : " + jwsClaims.getBody().get(providerPrefix, String.class));
+        logger.debug("Success authentication for user email " + subject + " and provider : " + jwsClaims.getBody().get(providerPrefix, String.class));
         return new JwtAuthenticationToken(context, context.getAuthorities());
     }
 

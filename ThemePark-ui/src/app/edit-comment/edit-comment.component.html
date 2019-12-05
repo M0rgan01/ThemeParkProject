@@ -1,0 +1,115 @@
+<!--///////////////////////////// COMMENTS LIST //////////////////////-->
+
+<div *ngIf="comments">
+
+  <div class="row">
+    <div class="col">
+      <h2 class="my-4">Mes avis</h2>
+    </div>
+  </div>
+
+  <div *ngIf="comments.totalPages > 1" class="row">
+    <div class="col-12">
+      <ngb-pagination class="d-flex justify-content-center" [collectionSize]="comments.totalElements" [(page)]="page"
+                      [pageSize]="size" [maxSize]="5"
+                      [rotate]="true" [ellipses]="false" [boundaryLinks]="true" (pageChange)="getComments()">
+      </ngb-pagination>
+    </div>
+  </div>
+
+  <div class="form-row mb-4">
+    <select (change)="getComments()" class="custom-select" style="width: auto" [(ngModel)]="size">
+      <option [ngValue]="6">6 commentaires</option>
+      <option [ngValue]="12">12 commentaires</option>
+      <option [ngValue]="24">24 commentaires</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <div class="table-responsive">
+      <table class="table table-borderless table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Parc</th>
+          <th scope="col">Note</th>
+          <th scope="col">Date</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr (click)="onSelectedComment(c)" class="cliquable" *ngFor="let c of comments.content">
+          <td class="align-middle" style="height: 70px">{{ c.park.name }} </td>
+          <td class="align-middle">
+            <ngb-rating *ngIf="c.notation > 0" class="p-0 m-0" id="rating1" style="font-size: 1.5em; outline: none"
+                        [(rate)]="c.notation"
+                        max="5" [readonly]="true"></ngb-rating>
+          </td>
+          <td class="align-middle">{{ c.date | date: 'dd/MM/yyyy' }}</td>
+          <td class="align-middle"><span *ngIf="c.updatedContent" class="badge badge-warning">Commentaire modifié</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!--///////////////////////////// COMMENT EDIT //////////////////////-->
+
+<div *ngIf="comment">
+  <div class="row">
+    <div class="col">
+      <h2 class="my-4">Modification de l'avis</h2>
+    </div>
+  </div>
+  <div class="row">
+    <form #f=ngForm (ngSubmit)="onUpdateComment(comment)" class="col">
+      <div class="form-group">
+        <label for="textarea1">Modification du commentaire :</label>
+        <textarea name="content" maxlength="500" [(ngModel)]="comment.content" required class="form-control"
+                  id="textarea1" rows="3"></textarea>
+        <div *ngIf="comment.content" class="form-text small">
+          <p>Nombre de caractères restant: {{1000 - comment.content.length}}</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="my-0" for="rating2">Laisser une note (facultatif) :</label>
+        <div class="row">
+          <div class="col">
+            <ngb-rating class="d-inline" id="rating2" style="font-size: 1.5em; outline: none"
+                        [(rate)]="comment.notation"
+                        max="5"></ngb-rating>
+            <button *ngIf="comment.notation !== 0" (click)="resetRating()" type="button" class="close ml-2">
+              <span>&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button [disabled]="f.invalid" type="submit" class="btn btn-primary">Modifier</button>
+      <button (click)="onDelete(content)" type="button" class="btn btn-danger ml-2">Supprimer</button>
+    </form>
+  </div>
+</div>
+
+
+<!--///////////////////////////// ALERTE TEMPLATE //////////////////////-->
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Suppression du commentaire</h4>
+    <button type="button" class="close" style="outline: none;" aria-label="Close button" aria-describedby="modal-title"
+            (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="text-center"><strong>Êtes vous sûrs de vouloir supprimer ce commentaire ?</strong></p>
+    <p class="text-center">Cette action est irréversible</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Annuler</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Supprimer</button>
+  </div>
+</ng-template>
+
+

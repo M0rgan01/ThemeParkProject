@@ -1,9 +1,10 @@
 package com.theme.park.security.auth.handler;
 
-import com.theme.park.security.token.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theme.park.entities.SocialUser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.theme.park.object.SocialUserDTO;
+import com.theme.park.utilities.token.JwtService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
@@ -27,18 +28,15 @@ import java.io.IOException;
  */
 @Component
 public class LoginAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-    private final JwtService jwtService;
+    private JwtService jwtService;
+    private ObjectMapper objectMapper;
+    private ModelMapper modelMapper;
 
-    @Autowired
-    public LoginAwareAuthenticationSuccessHandler(final JwtService jwtService) {
+    public LoginAwareAuthenticationSuccessHandler(JwtService jwtService, ObjectMapper objectMapper, ModelMapper modelMapper) {
+        this.objectMapper = objectMapper;
         this.jwtService = jwtService;
+        this.modelMapper = modelMapper;
     }
-    @Value("${jwt.prefix}")
-    private String tokenPrefix;
-    @Value("${jwt.header.token.auth}")
-    private String headerAuth;
-    @Value("${jwt.header.token.refresh}")
-    private String headerRefresh;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -48,15 +46,19 @@ public class LoginAwareAuthenticationSuccessHandler implements AuthenticationSuc
         //création des token
         String accessToken = jwtService.createAuthToken(userContext);
         String refreshToken = jwtService.createRefreshToken(userContext);
-        
-        //on met en place le code de la réponse
+
+        ////// ACCESS TOKEN  //////
+        response.addCookie(jwtService.createAccessTokenCookie(accessToken));
+
+        ////// REFRESH TOKEN  //////
+        response.addCookie(jwtService.createRefreshTokenCookie(refreshToken));
+
+        // on met en place le code de la réponse
         response.setStatus(HttpStatus.OK.value());
-           
-       //on ajoute le token d'auth et le token de refresh à l'en-tête de la réponse
-      	response.addHeader(headerAuth, tokenPrefix + accessToken);
-      	response.addHeader(headerRefresh, tokenPrefix + refreshToken);
+        // on ajoute l'entité user
+        response.getWriter().write(objectMapper.writeValueAsString(modelMapper.map(userContext, SocialUserDTO.class)));
         clearAuthenticationAttributes(request);
-        
+
     }
 
     /**

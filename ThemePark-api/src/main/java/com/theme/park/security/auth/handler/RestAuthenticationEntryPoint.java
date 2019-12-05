@@ -12,7 +12,8 @@ import java.io.IOException;
 
 /**
  * 
- * Processus d'accès refusé personnalisé
+ * Processus d'envoie de réponse personnalisée lors d'une exception
+ * dans le processus d'authentification
  * 
  * @author Pichat morgan
  *
@@ -24,7 +25,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex)
 			throws IOException, ServletException {
-		
+
 		//mise au point du code de status et du contenu de la réponse
 		response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
 

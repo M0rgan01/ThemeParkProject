@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface ParkRepository extends JpaRepository<Park, Long>, JpaSpecificationExecutor<Park> {
 
-    Optional<Park> findByName(String name);
+    Optional<Park> findByUrlName(String name);
 }

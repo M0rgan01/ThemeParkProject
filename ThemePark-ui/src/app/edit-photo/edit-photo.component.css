@@ -1,0 +1,12 @@
+.uploadfilecontainer {
+  height: 200px;
+  border: 2px dashed #377673;
+  border-radius: 10px;
+}
+
+.uploadfilecontainer:hover {
+  cursor: pointer;
+  background-color: #00eeff !important;
+}
+
+

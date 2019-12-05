@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
 import {APIService} from '../../service/api.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {AuthenticationService} from '../../service/authentification.service';
+import {CustomSocialUser} from '../../model/custom-social-user.model';
 
 @Component({
   selector: 'app-login',
@@ -10,23 +12,29 @@ import {Router} from '@angular/router';
 })
 
 export class LoginComponent implements OnInit {
+  private paramRedirect;
 
-  public user: SocialUser;
-  public loggedIn: boolean;
-
-  constructor(private authService: AuthService, private api: APIService, private router: Router) {
+  constructor(private socialAuthService: AuthService,
+              private authService: AuthenticationService,
+              private api: APIService,
+              private router: Router,
+              private activeRoute: ActivatedRoute) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+      this.activeRoute.queryParamMap.subscribe(params => {
+       this.paramRedirect = params.get('redirect');
+      });
+  }
 
 
   signIn(provider: string) {
     if (provider === 'google') {
-      this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then(value => {
+      this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then(value => {
         this.apiLogin(value);
       });
     } else if (provider === 'facebook') {
-      this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then(value => {
+      this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then(value => {
         this.apiLogin(value);
       });
     } else {
@@ -36,19 +44,16 @@ export class LoginComponent implements OnInit {
   }
 
   apiLogin(user: SocialUser) {
-    this.user = user;
-    this.loggedIn = (user != null);
-    this.api.login(user).subscribe(value => {
-      console.log('success');
-    }, error1 => {
-      console.log(error1);
-    });
-  }
 
-  signOut(): void {
-    this.authService.signOut().then(value => {
-      this.user = null;
-      this.loggedIn = false;
+    // si on est déja connecté, alors on logout
+    if (this.authService.isAuth()) {
+      this.authService.removeUserAndCookies();
+    }
+
+    this.api.postRessources<CustomSocialUser>('/auth/login', user).subscribe(resp => {
+      this.authService.saveUser(resp);
+      this.router.navigateByUrl('/');
+      console.log('success');
     });
   }
 
