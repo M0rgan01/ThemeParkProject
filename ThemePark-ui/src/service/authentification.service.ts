@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {JwtHelperService} from '@auth0/angular-jwt';
 import {Router} from '@angular/router';
 import {CustomSocialUser} from '../model/custom-social-user.model';
 import {APIService} from './api.service';
@@ -12,7 +11,6 @@ export class AuthenticationService {
   private roles: Array<any>;
 
   constructor(private http: HttpClient,
-              private jwtHelper: JwtHelperService,
               private router: Router,
               private api: APIService) {
   }

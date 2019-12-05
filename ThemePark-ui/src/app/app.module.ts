@@ -8,7 +8,6 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {APIService} from '../service/api.service';
 import {AppRoutingModule} from './app-routing.module';
-import {JwtModule, JwtModuleOptions} from '@auth0/angular-jwt';
 import {AuthGuardService} from '../service/auth-guard.service';
 import {AuthenticationService} from '../service/authentification.service';
 import {ParkComponent} from './park/park.component';
@@ -23,12 +22,12 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {TokenInterceptor} from '../interceptor/http-interceptor';
 import {AdminGuardService} from '../service/admin-guard.service';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
-import { DateAgoPipe } from '../pipe/date-ago.pipe';
+import {DateAgoPipe} from '../pipe/date-ago.pipe';
 import {DragDropDirective} from '../directive/drag-drop.directive';
-import { EditPhotoComponent } from './edit-photo/edit-photo.component';
-import { ToastComponent } from './toast/toast.component';
+import {EditPhotoComponent} from './edit-photo/edit-photo.component';
+import {ToastComponent} from './toast/toast.component';
 import {ToastService} from '../service/toast.service';
-import { EditCommentComponent } from './edit-comment/edit-comment.component';
+import {EditCommentComponent} from './edit-comment/edit-comment.component';
 
 const config = new AuthServiceConfig([
   {
@@ -45,16 +44,6 @@ export function provideConfig() {
   return config;
 }
 
-const JWTModuleOptions: JwtModuleOptions = {
-  config: {
-    tokenGetter: tokenGetters,
-    whitelistedDomains: ['localhost:4200']
-  }
-};
-
-export function tokenGetters() {
-  return localStorage.getItem('token');
-}
 
 @NgModule({
   declarations: [
@@ -80,8 +69,7 @@ export function tokenGetters() {
     HttpClientModule,
     AppRoutingModule,
     NgbModule,
-    InfiniteScrollModule,
-    JwtModule.forRoot(JWTModuleOptions)
+    InfiniteScrollModule
   ],
   providers: [APIService, AuthGuardService, AdminGuardService, AuthenticationService, ToastService, {
     provide: AuthServiceConfig,

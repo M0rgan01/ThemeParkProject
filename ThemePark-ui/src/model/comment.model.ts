@@ -8,4 +8,6 @@ export class Comment {
   notation: number;
   socialUser: SocialUser;
   park: Park;
+  updatedContent: boolean;
+  deleteComment: boolean;
 }

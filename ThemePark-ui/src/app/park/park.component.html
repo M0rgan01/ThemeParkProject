@@ -84,9 +84,14 @@
                     max="5" [readonly]="true"></ngb-rating>
       </div>
       <span class="text-muted text-center d-lg-inline d-block">{{i.date | dateAgo}}</span>
+      <span *ngIf="i.updatedContent" class="text-muted text-center d-lg-inline d-block ml-2"><em>(Modifier)</em></span>
     </div>
     <div class="col-12">
       <p class="text-center text-lg-left">{{i.content}}</p>
+    </div>
+    <div *ngIf="i.socialUser.email === authService.getEmail() && i.socialUser.provider === authService.getProvider()"
+         class="col text-center text-lg-left">
+      <a (click)="navigateCommentEdit(i.id)" class="btn btn-primary text-white cliquable">Modifier</a>
     </div>
   </div>
 </div>
@@ -100,4 +105,3 @@
   </span>
 </ng-template>
 
-<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

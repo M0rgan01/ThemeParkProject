@@ -112,7 +112,7 @@ export class EditPhotoComponent implements OnInit {
 
   onDeleteFile(id: number) {
     this.api.deleteRessources<Photo>('/userRole/photo/' + id).subscribe(value => {
-      this.toastService.show(new Toast('Succes de la suppression', 'bg-success text-light', 5000));
+      this.toastService.show(new Toast('Succès de la suppression', 'bg-success text-light', 5000));
       this.reloadPhotos();
     });
   }

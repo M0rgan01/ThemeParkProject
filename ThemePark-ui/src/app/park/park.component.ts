@@ -58,7 +58,6 @@ export class ParkComponent implements OnInit {
       }
       if (error1.error.errors) {
         for (let i = 0; i < error1.error.errors.length; i++) {
-          console.log(error1.error.errors[i]);
           this.toastService.show(new Toast(error1.error.errors[i].message, 'bg-danger text-light', 10000));
         }
       }
@@ -74,6 +73,7 @@ export class ParkComponent implements OnInit {
     const listSearchCriteria = new Array<SearchCriteria>();
     listSearchCriteria.push(new SearchCriteria('park.id', ':', this.park.id));
     listSearchCriteria.push(new SearchCriteria('date', 'ORDER_BY_DESC', null));
+    listSearchCriteria.push(new SearchCriteria('deleteComment', ':', false));
 
     this.api.getRessources<Page<Comment>>('/public/comments/' + page + '/' + size + '?values=' +
       btoa(JSON.stringify(listSearchCriteria))).subscribe(value => {
@@ -101,4 +101,7 @@ export class ParkComponent implements OnInit {
     this.infiniteScrollDisable = false;
   }
 
+  navigateCommentEdit(id: number) {
+    this.router.navigateByUrl('/account/comment?id=' + id);
+  }
 }
